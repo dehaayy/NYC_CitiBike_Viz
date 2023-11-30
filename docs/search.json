@@ -4,20 +4,13 @@
     "href": "index.html",
     "title": "Citi-Bike NYC Data Viz",
     "section": "",
-    "text": "1 Introduction\nHey Karma girl"
-  },
-  {
-    "objectID": "data.html#description",
-    "href": "data.html#description",
-    "title": "2  Data",
-    "section": "2.1 Description",
-    "text": "2.1 Description"
+    "text": "1 Introduction\nAfter launching its initial fleet of 6,000 bikes across 300 stations in 2013, Citi Bike has since transformed the streets of New York City in many lasting ways. Today, Citi Bike is the largest bike share system in the United States, approaching 30,000 bikes and 2,000 stations across New York City, Jersey City, and Hoboken, New Jersey. \nWith around 3.7 million rides in October 2023, ridership is up approximately 30% compared to the same time last year and almost 75% compared to pre-pandemic levels in October 2019. As ridership demand and growth continue to reach new highs, Citi Bike and New York City are responding by introducing plans for expansions and improvements to the system. On November 3, 2023, Mayor Eric Adams and New York City Department of Transportation Commissioner Ydanis Rodriques announced plans to significantly expand Citi Bike services by the end of next year. These plans include doubling the number of electric bikes at its stations and electrifying 20% of its existing stations.\nThis year the city is celebrating 10 years of the bike-sharing program that changed New York City's transportation landscape, infrastructure, culture, and accessibility. As Citi Bike continues to establish itself as an indispensable service and vital component of the city's transportation network, ensuring its reliability and equity is key to securing the program's success in the long run. This project will examine Citi Bike's growth throughout the years, exploring demand, ridership growth, station expansions, bike availability, trip distance and duration, and membership costs, and try to identify notable trends across these variables. \n\nSome specific questions we are interested in include:\n\nHow has Citi Bike ridership grown since launch?\nHow did Citi Bike approach station expansion over the years? (when and where did they expand to, different phases of expansion)\nHow does ridership differ across neighborhoods in New York?\nHow does station \"usability\"/ availability differ across neighborhoods?\nWhat does the demographic of Citi Bike riders look like? Who are the primary riders? \nHow do ridership and demand differ across different payment plans/membership types?"
   },
   {
     "objectID": "data.html#missing-value-analysis",
     "href": "data.html#missing-value-analysis",
     "title": "2  Data",
-    "section": "2.2 Missing value analysis",
-    "text": "2.2 Missing value analysis"
+    "section": "2.1 Missing value analysis",
+    "text": "2.1 Missing value analysis"
   }
 ]
