@@ -19,6 +19,4 @@ Some specific questions we are interested in include:
 
 -   What does the demographic of Citi Bike riders look like? Who are the primary riders? 
 
--   the guy is french and so is my bf
-
 -   How do ridership and demand differ across different payment plans/membership types?
