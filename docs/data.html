@@ -142,7 +142,9 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#missing-value-analysis" id="toc-missing-value-analysis" class="nav-link active" data-scroll-target="#missing-value-analysis"><span class="header-section-number">2.1</span> Missing value analysis</a></li>
+  <li><a href="#technical-description" id="toc-technical-description" class="nav-link active" data-scroll-target="#technical-description"><span class="header-section-number">2.1</span> Technical Description</a></li>
+  <li><a href="#research-plan" id="toc-research-plan" class="nav-link" data-scroll-target="#research-plan"><span class="header-section-number">2.2</span> Research Plan</a></li>
+  <li><a href="#missing-value-analysis" id="toc-missing-value-analysis" class="nav-link" data-scroll-target="#missing-value-analysis"><span class="header-section-number">2.3</span> Missing Value Analysis</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/YOUR_GITHUB_ACCOUNT/REPO_NAME/edit/main/data.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/YOUR_GITHUB_ACCOUNT/REPO_NAME/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
@@ -166,9 +168,78 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p>heyo this is have i roll, what happened to my previous push ## Description</p>
-<section id="missing-value-analysis" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="missing-value-analysis"><span class="header-section-number">2.1</span> Missing value analysis</h2>
+<section id="technical-description" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="technical-description"><span class="header-section-number">2.1</span> Technical Description</h2>
+<p><strong>Data Sources and Collection</strong></p>
+<p>Our project primarily utilizes data from Citi Bike New York’s bike sharing system. The data, accessible via Citi Bike’s system data and its Live API, encompasses a comprehensive record of bike usage. We have collected all available data from the year 2013 to the present, amassing over 64 GB of raw data, downloading from their bulk data website, and process it in batches and merging various batches into bigger ones due to computational power constraints.</p>
+<p><img src="images/Screenshot 2023-11-30 at 9.14.07 PM.png" class="img-fluid"></p>
+<p><strong>Data Collection Method and Responsible Entity</strong>:</p>
+<ul>
+<li><p>Citi Bike, operated by NYC Bike Share LLC, a subsidiary of Lyft Inc, collects the data​​.</p></li>
+<li><p>The data collection method isn’t specified in their monthly analysis reports, however it likely obtained through the combination of Citi-Bike app (through Customer Usage) with GPS input embedded on the app, bike and dock tracking sensors each station has. The data includes real-time program data, ensuring current and relevant information​​.</p></li>
+<li><p>API data showing current station capacities and status are updated every 5 seconds, while their bulk data showing bike transactions every first day of the month for the past month.</p></li>
+</ul>
+<p><strong>Data Processing and Format</strong></p>
+<p>To facilitate our analysis, we developed a custom data processing tool that converts raw data into a structured format suitable for time-series analysis. This process involved tracking hourly inflow and outflow at each of Citi Bike’s 2500+ stations. Our final data-set consists of monthly data frames, each representing around 720 hours (24 hours x 30 days) across all 2500 stations, thus offering a detailed view of bike station usage over time, and we have collected data for 130 months. The data is structured with time (dates for each hour since 2013 until end of October 2023) on the rows and station names on the columns, with each cell indicating the inflow at a specific station and time.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/Screenshot 2023-11-30 at 9.14.36 PM.png" class="img-fluid figure-img" width="471"></p>
+<figcaption class="figure-caption"><img src="images/Screenshot 2023-11-30 at 9.14.47 PM.png" class="img-fluid figure-img" width="472"></figcaption>
+</figure>
+</div>
+<p><strong>Live API Integration</strong></p>
+<p>Additionally, we are leveraging the Live API to monitor real-time station capacities and bike availability, which provides valuable insights into current usage patterns and station dynamics.</p>
+<p><strong>Known Data Issues</strong></p>
+<p>One of the challenges we’ve encountered is ensuring the accuracy and completeness of the historical data, particularly in the context of station additions, removals, and capacity changes over time. These factors can significantly impact time-series analysis and trend interpretation. We have only kept columns (stations names) that were consistent over the time-frame of our analysis.</p>
+<p><strong>Data Importation</strong></p>
+<p>Data importation is performed through automated scripts that fetch and process data from both the static data-sets and the Live API, ensuring consistent and up-to-date information flow into our analysis pipeline.</p>
+</section>
+<section id="research-plan" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="research-plan"><span class="header-section-number">2.2</span> Research Plan</h2>
+<p><strong>Linking Data to Research Questions</strong></p>
+<p>Our research seeks to uncover and visualize trends in bike-sharing usage across various regions and stations in New York City over time. The structured time-series data enables us to conduct comprehensive analyses, such as identifying peak usage times, understanding seasonal variations, and detecting long-term usage trends.</p>
+<p><strong>Utilizing Visualizations</strong></p>
+<p>The attached visualization exemplifies our approach. It displays the average hourly inflow traffic frequency at Citi Bike stations since 2013, offering insights into the spatial and temporal patterns of bike usage in New York City. We would like to dig into these patterns and explore how the frequency of usage got affected by time.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/deha_karma_edav.jpeg" class="img-fluid figure-img" width="416"></p>
+</figure>
+</div>
+<p><strong>Analyzing Live Data</strong></p>
+<p>Incorporating real-time data from the Live API allows us to extend our analysis to current usage patterns, further enriching our understanding of the system’s dynamics and assisting in predictive modeling for future trends.</p>
+<p>This data-driven approach provides a robust foundation for answering our core research questions about the usage patterns of New York City’s bike-sharing system and contributes to a deeper understanding of urban mobility.</p>
+</section>
+<section id="missing-value-analysis" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="missing-value-analysis"><span class="header-section-number">2.3</span> Missing Value Analysis</h2>
+<p>In our analysis of the Ci-ti Bike data, we focus on the transformation of raw transaction data into a more aggregated and analyzable format. Each transaction in the dataset represents a discrete bike usage event, with details such as time, location, and duration. To construct a meaningful analysis framework, we aggregate these individual transactions into hourly inflow counts for each station.</p>
+<p><strong>Characteristics of Raw Data:</strong></p>
+<ul>
+<li><p>The raw data is transactional, with each entry representing a distinct bike usage event.</p></li>
+<li><p>This dataset does not contain any ‘NA’ values, indicating a comprehensive record of all transactions recorded by the system.</p></li>
+</ul>
+<p><strong>Transformation Process:</strong></p>
+<ul>
+<li><p>We process this data by summing and filtering transactions to attain an hourly inflow count per station.</p></li>
+<li><p>This aggregation smoothens the data for time-series analysis, focusing on broader usage trends rather than individual transactions.</p></li>
+</ul>
+<p><strong>Challenges in Missing Data Identification:</strong></p>
+<ul>
+<li><p>A critical limitation of this approach is the inability to distinguish between a non-recorded transaction and a genuine absence of transactions. If a bike is used but the transaction is not recorded due to any system error, it is indistinguishable from a time frame where no bike usage occurred.</p></li>
+<li><p>Consequently, as data analysts, we cannot definitively assert whether a gap in the data is due to a recording failure or actual inactivity.</p></li>
+</ul>
+<p><strong>Observations of Missing Data:</strong></p>
+<ul>
+<li><p>Upon reducing the transaction data from a per-second basis to an hourly format, we observed gaps in the data, where certain dates appear to be skipped.</p></li>
+<li><p>These missing values could represent days with extremely low or no activity at specific stations, or they might indicate periods where data was not recorded or collected due to technical issues.</p></li>
+</ul>
+<p><img src="images/Screenshot 2023-11-30 at 10.22.05 PM.png" class="img-fluid" width="481"></p>
+<p>Although there is no documented explanation for the clusters of missing data, our team has hypothesized potential reasons for these gaps, though no clear pattern of missing data is evident.</p>
+<ol type="1">
+<li><p><strong>Region 1</strong> (as shown in the image below) aligns with the lock-down period in New York City during the COVID-19 pandemic, particularly through the summer months. This period likely is missing due to bike usage restrictions due to public health restrictions and changes in commuting patterns, potentially resulting in sparse data during this period.</p></li>
+<li><p><strong>Region 2</strong>, while not technically missing data, represents a period where data is unavailable due to its coincidence with the “leap day” in February, which occurs every four years. This absence is likely a result of the dataset’s structure, which may not account for this quadrennial variation in the calendar.</p></li>
+<li><p><strong>Region 3</strong> presents a more elusive case. Our research has not uncovered a formal explanation for this data gap. However, the fact that these missing data points consistently occur during winter months leads us to speculate that it might be related to seasonal factors. The hypothesis is that this period could correspond to times when Citi Bike operations are impacted by heavy snow or routine maintenance closures, leading to reduced activity or data recording.</p></li>
+</ol>
+<p><img src="images/Image 11-30-23 at 10.21 PM.jpg" class="img-fluid" width="482"></p>
 
 
 </section>
