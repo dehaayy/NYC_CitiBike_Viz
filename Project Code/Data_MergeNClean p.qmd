@@ -1,0 +1,185 @@
+---
+title: "Final_Data_Processing"
+format: html
+editor: visual
+---
+## Library
+```{r}
+library(tidyverse)
+library(readr)
+library(leaflet)
+library(dplyr)
+library(tidyr)
+library(httr)
+library(purrr)
+```
+
+## Import Raw inflow and outflow Data
+
+```{r}
+inflow_raw_data_pre22 <- read_csv("/Users/dehaay/Desktop/BikeShare Project/output/raw_End_station_count_all.csv")
+outflow_raw_data_pre22<- read_csv("/Users/dehaay/Desktop/BikeShare Project/output/Start_station_count_all.csv")
+
+inflow_raw_data_post22 <- read_csv("/Users/dehaay/Desktop/BikeShare Project/output/post_22_04end_station_count_all.csv")
+outflow_raw_data_post22<- read_csv("/Users/dehaay/Desktop/BikeShare Project/output/post_22_04start_station_count_all.csv")
+
+```
+
+## Import Live Data Through API
+```{r}
+fetch_bike_data <- function(api_url) {
+  # Sending a GET request to the API
+  response <- GET(api_url)
+  
+  # Checking the status of the response
+  if (status_code(response) == 200) {
+    # Parsing the content of the response to a list
+    api_data <- content(response, "parsed")
+  } else {
+    cat("Failed to retrieve data: HTTP status", status_code(response), "\n")
+    return(NULL)
+  }
+  
+  station_raw <- api_data$data$stations
+  
+  # Transforming the nested list into a dataframe
+  databike_raw <- map_dfr(station_raw, ~flatten_df(as.data.frame(.x)))
+  
+  return(databike_raw)
+}
+
+
+# Example usage:
+url <- "https://gbfs.lyft.com/gbfs/2.3/bkn/en/station_information.json"
+databike_raw<- fetch_bike_data(url)
+api_dict <- subset(databike_raw, select = c("name", "lat", "lon", "capacity"))
+
+active_station_names <-api_dict$name
+head(api_dict,5)
+```
+
+## Filter for no longer active stations
+
+```{r}
+
+keep_columns <- function(data_frame, column_names) {
+  # Select only the columns that are in the 'column_names' list
+  data_frame[, colnames(data_frame) %in% c(column_names,"datetime"), drop = FALSE]
+}
+
+
+```
+
+## Fix the Date format by merging columns and call the previous function
+
+```{r}
+
+create_datetime_column <- function(data) {
+  # Create the datetime column
+  data$datetime <- paste(data$year, data$month, data$day, 
+                         sprintf("%02d:00:00", data$hour_interval))
+  # Convert the combined string to a date-time object
+  data$datetime <- as.POSIXct(data$datetime, format = "%Y %m %d %H:%M:%S")
+  # Move datetime to the first column and remove the original date columns
+  data <- data %>%
+    select(datetime, everything()) %>%
+    select(-year, -month, -day, -hour_interval)
+
+  
+  return(keep_columns(data, active_station_names))
+}
+
+inflow_raw_data_pre22 <- create_datetime_column(inflow_raw_data_pre22)
+outflow_raw_data_pre22<- create_datetime_column(outflow_raw_data_pre22)
+inflow_raw_data_post22 <- create_datetime_column(inflow_raw_data_post22)
+outflow_raw_data_post22<- create_datetime_column(outflow_raw_data_post22)
+
+head(inflow_raw_data_pre22,5)
+head(inflow_raw_data_post22,5)
+```
+
+
+## Get complete Data Merging Data Chunks 2013-2022 and 2022-2023 October
+
+```{r}
+merge_data_frames <- function(df1, df2) {
+  
+  merged_df <- full_join(df1, df2, by = intersect(names(df1), names(df2)))
+
+  merged_df[is.na(merged_df)] <- 0
+  return(merged_df)
+}
+
+inflow_raw <- merge_data_frames(inflow_raw_data_pre22,inflow_raw_data_post22)
+outflow_raw <- merge_data_frames(outflow_raw_data_pre22,outflow_raw_data_post22)
+
+head(inflow_raw,6)
+
+```
+
+## Check to have both inflow and outflow has the same column names
+This is an important step as before we merge them we want to make sure that they have the data associated with each columns.
+```{r}
+
+drop_columns <- function(data_frame, column_names) {
+  # Exclude the columns that are in the 'column_names' list
+  return(data_frame[, !(colnames(data_frame) %in% column_names), drop = FALSE])
+}
+
+matching_column_names <- intersect(colnames(inflow_raw),colnames(outflow_raw))
+
+inflow_drop_station_names <-setdiff(colnames(inflow_raw) ,matching_column_names)
+outflow_drop_Station_names <-setdiff(colnames(outflow_raw) ,matching_column_names)
+
+inflow_raw <- drop_columns(inflow_raw,inflow_drop_station_names)
+outflow_raw <- drop_columns(outflow_raw,outflow_drop_Station_names)
+
+print(setdiff(colnames(inflow_raw),colnames(outflow_raw)))
+print(dim(inflow_raw))
+print(dim(outflow_raw))
+```
+
+#Remove Duplicate Rows
+This is especially important to avoid confusion with daylight time savings or where there are duplicate row values
+```{r}
+keep_first_datetime <- function(data_frame) {
+  # Keeping only the first occurrence of each value in the 'datetime' column
+  return(data_frame[!duplicated(data_frame$datetime), ])
+}
+
+inflow_raw <- keep_first_datetime(inflow_raw)
+outflow_raw <- keep_first_datetime(outflow_raw)
+
+print(dim(inflow_raw))
+print(dim(outflow_raw))
+```
+They are almost equal now, we keep only the datetime values that are present in both of the dataframes
+
+# Equalize the dates data is recorded
+```{r}
+intersecting_dates <- intersect(inflow_raw$datetime,outflow_raw$datetime)
+
+keep_intersecting_datetimes <- function(df, dates_keep) {
+
+  # Subsetting the original dataframes to include only the intersecting "DateTime" values
+  df_intersecting <- df[df$datetime %in% intersecting_dates, ]
+
+
+  return(df_intersecting)
+}
+
+inflow_raw <-keep_intersecting_datetimes(inflow_raw,intersecting_dates)
+outflow_raw <-keep_intersecting_datetimes(outflow_raw,intersecting_dates)
+
+print(dim(inflow_raw))
+print(dim(outflow_raw))
+```
+
+#Write Out Cleaned Data
+
+```{r}
+saveRDS(inflow_raw, file = "/Users/dehaay/Desktop/EDAV PROJECT/Organized Files/Cleaned Data/inflow_df")
+saveRDS(outflow_raw, file = "/Users/dehaay/Desktop/EDAV PROJECT/Organized Files/Cleaned Data/outflow_df")
+```
+
+
