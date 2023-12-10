@@ -1,0 +1,27 @@
+---
+title: "Graphs"
+editor: visual
+---
+
+# Read Data 
+
+```{r}
+# Set the working directory to the project root (do this once per session)
+
+# Read the file using a relative path
+file_path <- "⭐️Project Code/Cleaned Data p/Grouped_Data"
+# Read "data_by_month.rds" into a dataframe named "data_by_month"
+data_by_month <- readRDS(file.path(file_path, "data_by_month.rds"))
+
+# Read "data_by_year.rds" into a dataframe named "data_by_year"
+data_by_year <- readRDS(file.path(file_path, "data_by_year.rds"))
+
+# Read "data_by_weekdy.rds" into a dataframe named "data_by_weekdy"
+data_by_weekdy <- readRDS(file.path(file_path, "data_by_weekdy.rds"))
+
+# Read "data_by_season.rds" into a dataframe named "data_by_season"
+data_by_season <- readRDS(file.path(file_path, "data_by_season.rds"))
+
+data_by_day <- readRDS(file.path(file_path, "data_by_day.rds"))
+
+```
