@@ -1,5 +1,22 @@
 # Interactive graph
 
+<!-- <style> -->
+<!--   * { -->
+<!--     font-family: sans-serif; -->
+<!--   } -->
+<!-- </style>  -->
+
+<!-- <div id="plot"> -->
+<!-- </div> -->
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/d3@7"></script> -->
+<!-- <script src="scripts/myscript.js"></script> -->
+
+---
+title: "Interactive Graph and Map"
+format: html
+---
+
 <style>
   * {
     font-family: sans-serif;
@@ -7,7 +24,19 @@
 </style> 
 
 <div id="plot">
+  <!-- Existing D3 plot will be here -->
 </div>
 
+<div id="map" style="height: 400px;">
+  <!-- Leaflet map will go here -->
+</div>
+
+<!-- Include Leaflet CSS and JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<!-- Include D3.js -->
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+
+<!-- Reference to your JavaScript file -->
 <script src="scripts/myscript.js"></script>

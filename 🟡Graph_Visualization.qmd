@@ -3,7 +3,7 @@ title: "Graphs"
 editor: visual
 ---
 
-# Read Data 
+# Read Data
 
 ```{r}
 # Set the working directory to the project root (do this once per session)

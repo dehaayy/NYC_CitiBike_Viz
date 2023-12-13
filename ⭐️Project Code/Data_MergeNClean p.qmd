@@ -3,7 +3,9 @@ title: "Final_Data_Processing"
 format: html
 editor: visual
 ---
+
 ## Library
+
 ```{r}
 library(tidyverse)
 library(readr)
@@ -26,6 +28,7 @@ outflow_raw_data_post22<- read_csv("/Users/dehaay/Desktop/BikeShare Project/outp
 ```
 
 ## Import Live Data Through API
+
 ```{r}
 fetch_bike_data <- function(api_url) {
   # Sending a GET request to the API
@@ -98,7 +101,6 @@ head(inflow_raw_data_pre22,5)
 head(inflow_raw_data_post22,5)
 ```
 
-
 ## Get complete Data Merging Data Chunks 2013-2022 and 2022-2023 October
 
 ```{r}
@@ -118,7 +120,9 @@ head(inflow_raw,6)
 ```
 
 ## Check to have both inflow and outflow has the same column names
+
 This is an important step as before we merge them we want to make sure that they have the data associated with each columns.
+
 ```{r}
 
 drop_columns <- function(data_frame, column_names) {
@@ -139,8 +143,8 @@ print(dim(inflow_raw))
 print(dim(outflow_raw))
 ```
 
-#Remove Duplicate Rows
-This is especially important to avoid confusion with daylight time savings or where there are duplicate row values
+#Remove Duplicate Rows This is especially important to avoid confusion with daylight time savings or where there are duplicate row values
+
 ```{r}
 keep_first_datetime <- function(data_frame) {
   # Keeping only the first occurrence of each value in the 'datetime' column
@@ -153,9 +157,11 @@ outflow_raw <- keep_first_datetime(outflow_raw)
 print(dim(inflow_raw))
 print(dim(outflow_raw))
 ```
+
 They are almost equal now, we keep only the datetime values that are present in both of the dataframes
 
 # Equalize the dates data is recorded
+
 ```{r}
 intersecting_dates <- intersect(inflow_raw$datetime,outflow_raw$datetime)
 
@@ -181,5 +187,3 @@ print(dim(outflow_raw))
 saveRDS(inflow_raw, file = "/Users/dehaay/Desktop/EDAV PROJECT/Organized Files/Cleaned Data/inflow_df")
 saveRDS(outflow_raw, file = "/Users/dehaay/Desktop/EDAV PROJECT/Organized Files/Cleaned Data/outflow_df")
 ```
-
-
