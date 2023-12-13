@@ -13,7 +13,12 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // Read data from CSV file
 d3.csv('data.csv').then(function(data) {
     data.forEach(function(d) {
+
+        d.value = parseFloat(d.value);
+        d.lat = parseFloat(d.lat);
+        d.lon = parseFloat(d.lon);
         var color = getColorForValue(d.value);
+
 
         L.circle([+d.lat, +d.lon], {
             color: color,
