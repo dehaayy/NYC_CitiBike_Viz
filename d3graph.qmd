@@ -17,6 +17,8 @@ format: html
 <div style="font-size: 36px; font-weight: bold;">Trends and Changes Over Time</div>
 
 ## Yearly Comparison
+<p>
+Utilize the slider to visualize the evolution of total flow values for Citi-Bikes across New York stations throughout the years of its service.</p>
 <!-- Slider -->
 <label for="yearSlider">Select Year: </label>
 <input type="range" id="yearSlider" min="2013" max="2023" step="1" value="2013">
@@ -71,6 +73,9 @@ format: html
 In the upcoming charts, we employ a sequential color scheme where darker shades indicate higher values in the subsequent graphs.</div>
 
 ## Weekly Comparison
+
+Utilize the slider to visualize the evolution of hourly average total flow traffic for Citi-Bikes across New York stations throughout the weekdays on between 2013 - 2023.
+
 <label for="weekdaySlider">Select a Weekday:</label>
 <input type="range" id="weekdaySlider" min="0" max="6" value="0">
 <span id="sliderWeekdayValue">Sunday</span>
@@ -83,6 +88,7 @@ In the upcoming charts, we employ a sequential color scheme where darker shades 
 
 ## Month Comparison 
 
+Utilize the slider to visualize the evolution of hourly average total flow traffic for Citi-Bikes across New York stations throughout the months between 2013 - 2023.
 
   <label for="monthSlider">Select Month:</label>
   <input type="range" id="monthSlider" min="1" max="12" value="0">
