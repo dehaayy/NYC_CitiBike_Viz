@@ -1,17 +1,5 @@
 # Interactive graph
 
-<!-- <style> -->
-<!--   * { -->
-<!--     font-family: sans-serif; -->
-<!--   } -->
-<!-- </style>  -->
-
-<!-- <div id="plot"> -->
-<!-- </div> -->
-
-<!-- <script src="https://cdn.jsdelivr.net/npm/d3@7"></script> -->
-<!-- <script src="scripts/myscript.js"></script> -->
-
 ---
 title: "Interactive Graph and Map"
 format: html
@@ -25,12 +13,85 @@ format: html
 
 <div id="plot">
   <!-- Existing D3 plot will be here -->
+  
+<div style="font-size: 36px; font-weight: bold;">Trends and Changes Over Time</div>
+
+## Yearly Comparison
+<!-- Slider -->
+<label for="yearSlider">Select Year: </label>
+<input type="range" id="yearSlider" min="2013" max="2023" step="1" value="2013">
+<span id="sliderValue">2013</span>
+
+
+<!-- Legend -->
+
+<!-- TOTAL FLOW MAP -->
+### Hourly Average **TOTAL** Flow of Citi-Bikes Over the Years
+
+
+<div>
+<p><em>Total Flow</em> represents the sum of incoming and outgoing bike movements at each station.</p>
+
+
+<div id="totalFlowmap" style="height: 300px;">
 </div>
 
-<div id="map" style="height: 400px;">
-  <!-- Leaflet map will go here -->
 </div>
 
+
+<div style="display: flex; justify-content: space-around; align-items: center;">
+<div style="background-color: darkblue; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;">&lt; 2</div>
+<div style="background-color: blue; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;">&ge; 2 &amp</div>
+<div style="background-color: green; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;">&ge; 5 &amp</div>
+<div style="background-color: yellow; width: 50px; height: 20px; color: black; line-height: 20px; text-align: center;">&ge; 10 </div>
+<div style="background-color: red; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;">&ge; 15</div>
+</div>
+
+### Hourly Average **NET** Flow of Citi-Bikes Over the Years
+<!-- Netflow FLOW MAP -->
+<div>
+<p>Net Flow is defined as the difference between inflow and outflow. A negative netflow value of 'x' would suggest that approximately 'x' bikes will be disappearing from the station every hour.</p>
+<div id="netFlowMap" style="height: 300px;"></div>
+</div>
+
+<div style="display: flex; justify-content: space-around; align-items: center;">
+<div style="background-color: #762A83; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;">&lt; -0.3</div>
+<div style="background-color: #9970AB; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;">&lt; -0.2</div>
+<div style="background-color: #C2A5CF; width: 50px; height: 20px; color: black; line-height: 20px; text-align: center;">&lt; -0.1</div>
+<div style="background-color: #E7D4E8; width: 55px; height: 20px; color: black; line-height: 20px; text-align: center;">&lt; -0.01</div>
+<div style="background-color: #F7F7F7; width: 50px; height: 70px; color: black; line-height: 20px; text-align: center;">-0.01 to 0.01</div>
+<div style="background-color: #D9F0D3; width: 55px; height: 20px; color: black; line-height: 20px; text-align: center;">&gt; 0.01</div>
+<div style="background-color: #ACD39E; width: 50px; height: 20px; color: black; line-height: 20px; text-align: center;">&gt; 0.1</div>
+<div style="background-color: #5AAE61; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;">&gt; 0.2</div>
+<div style="background-color: #1B7837; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;">&gt; 0.3</div>
+</div>
+
+
+<div style="font-size: 15px; font-weight: no;">
+In the upcoming charts, we employ a sequential color scheme where darker shades indicate higher values in the subsequent graphs.</div>
+
+## Weekly Comparison
+<label for="weekdaySlider">Select a Weekday:</label>
+<input type="range" id="weekdaySlider" min="0" max="6" value="0">
+<span id="sliderWeekdayValue">Sunday</span>
+
+<div>
+<p>The graph illustrates how the **Total Flow** varies throughout the days of the week. </p>
+<div id="weekday_total" style="height: 300px;"></div>
+</div>
+
+
+## Month Comparison 
+
+
+  <label for="monthSlider">Select Month:</label>
+  <input type="range" id="monthSlider" min="1" max="12" value="0">
+  <span id="sliderMonthValue">January</span>
+
+<div>
+<p>The graph illustrates how the **Total Flow** changes throughout the months.</p>
+<div id="months_total" style="height: 300px;"></div>
+</div>
 <!-- Include Leaflet CSS and JS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -39,4 +100,11 @@ format: html
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 
 <!-- Reference to your JavaScript file -->
-<script src="scripts/myscript.js"></script>
+
+<script src="scripts/year_netflow.js"></script>
+
+<script src="scripts/year_totalflow.js"></script>
+
+<script src="scripts/weekday_totalflow.js"></script>
+
+<script src="scripts/months_totalflow.js"></script>
