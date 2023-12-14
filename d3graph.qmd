@@ -3,114 +3,197 @@
 ---
 title: "Interactive Graph and Map"
 format: html
+editor: 
+  markdown: 
+    wrap: 72
 ---
 
+```{=html}
 <style>
   * {
     font-family: sans-serif;
   }
-</style> 
-
+</style>
+```
 <div id="plot">
-  <!-- Existing D3 plot will be here -->
-  
-<div style="font-size: 36px; font-weight: bold;">Trends and Changes Over Time</div>
+
+<!-- Existing D3 plot will be here -->
+
+::: {style="font-size: 36px; font-weight: bold;"}
+Trends and Changes Over Time
+:::
 
 ## Yearly Comparison
-<p>
-Utilize the slider to visualize the evolution of total flow values for Citi-Bikes across New York stations throughout the years of its service.</p>
+
+<p>Utilize the slider to visualize the evolution of total flow values
+for Citi-Bikes across New York stations throughout the years of its
+service.</p>
+
 <!-- Slider -->
+
 <label for="yearSlider">Select Year: </label>
 <input type="range" id="yearSlider" min="2013" max="2023" step="1" value="2013">
-<span id="sliderValue">2013</span>
-
+[2013]{#sliderValue}
 
 <!-- Legend -->
 
 <!-- TOTAL FLOW MAP -->
+
 ### Hourly Average **TOTAL** Flow of Citi-Bikes Over the Years
 
-
 <div>
-<p><em>Total Flow</em> represents the sum of incoming and outgoing bike movements at each station.</p>
 
+<p><em>Total Flow</em> represents the sum of incoming and outgoing bike
+movements at each station.</p>
 
-<div id="totalFlowmap" style="height: 300px;">
+::: {#totalFlowmap style="height: 300px;"}
+:::
+
 </div>
 
-</div>
+::: {style="display: flex; justify-content: space-around; align-items: center;"}
+::: {style="background-color: darkblue; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;"}
+\< 2
+:::
 
+::: {style="background-color: blue; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;"}
+≥ 2 &amp
+:::
 
-<div style="display: flex; justify-content: space-around; align-items: center;">
-<div style="background-color: darkblue; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;">&lt; 2</div>
-<div style="background-color: blue; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;">&ge; 2 &amp</div>
-<div style="background-color: green; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;">&ge; 5 &amp</div>
-<div style="background-color: yellow; width: 50px; height: 20px; color: black; line-height: 20px; text-align: center;">&ge; 10 </div>
-<div style="background-color: red; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;">&ge; 15</div>
-</div>
+::: {style="background-color: green; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;"}
+≥ 5 &amp
+:::
+
+::: {style="background-color: yellow; width: 50px; height: 20px; color: black; line-height: 20px; text-align: center;"}
+≥ 10
+:::
+
+::: {style="background-color: red; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;"}
+≥ 15
+:::
+:::
 
 ### Hourly Average **NET** Flow of Citi-Bikes Over the Years
+
 <!-- Netflow FLOW MAP -->
+
 <div>
-<p>Net Flow is defined as the difference between inflow and outflow. A negative netflow value of 'x' would suggest that approximately 'x' bikes will be disappearing from the station every hour.</p>
-<div id="netFlowMap" style="height: 300px;"></div>
+
+<p>Net Flow is defined as the difference between inflow and outflow. A
+negative netflow value of 'x' would suggest that approximately 'x' bikes
+will be disappearing from the station every hour.</p>
+
+::: {#netFlowMap style="height: 300px;"}
+:::
+
 </div>
 
-<div style="display: flex; justify-content: space-around; align-items: center;">
-<div style="background-color: #762A83; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;">&lt; -0.3</div>
-<div style="background-color: #9970AB; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;">&lt; -0.2</div>
-<div style="background-color: #C2A5CF; width: 50px; height: 20px; color: black; line-height: 20px; text-align: center;">&lt; -0.1</div>
-<div style="background-color: #E7D4E8; width: 55px; height: 20px; color: black; line-height: 20px; text-align: center;">&lt; -0.01</div>
-<div style="background-color: #F7F7F7; width: 50px; height: 70px; color: black; line-height: 20px; text-align: center;">-0.01 to 0.01</div>
-<div style="background-color: #D9F0D3; width: 55px; height: 20px; color: black; line-height: 20px; text-align: center;">&gt; 0.01</div>
-<div style="background-color: #ACD39E; width: 50px; height: 20px; color: black; line-height: 20px; text-align: center;">&gt; 0.1</div>
-<div style="background-color: #5AAE61; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;">&gt; 0.2</div>
-<div style="background-color: #1B7837; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;">&gt; 0.3</div>
-</div>
+::: {style="display: flex; justify-content: space-around; align-items: center;"}
+::: {style="background-color: #762A83; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;"}
+\< -0.3
+:::
 
+::: {style="background-color: #9970AB; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;"}
+\< -0.2
+:::
 
-<div style="font-size: 15px; font-weight: no;">
-In the upcoming charts, we employ a sequential color scheme where darker shades indicate higher values in the subsequent graphs.</div>
+::: {style="background-color: #C2A5CF; width: 50px; height: 20px; color: black; line-height: 20px; text-align: center;"}
+\< -0.1
+:::
+
+::: {style="background-color: #E7D4E8; width: 55px; height: 20px; color: black; line-height: 20px; text-align: center;"}
+\< -0.01
+:::
+
+::: {style="background-color: #F7F7F7; width: 50px; height: 70px; color: black; line-height: 20px; text-align: center;"}
+-0.01 to 0.01
+:::
+
+::: {style="background-color: #D9F0D3; width: 55px; height: 20px; color: black; line-height: 20px; text-align: center;"}
+\> 0.01
+:::
+
+::: {style="background-color: #ACD39E; width: 50px; height: 20px; color: black; line-height: 20px; text-align: center;"}
+\> 0.1
+:::
+
+::: {style="background-color: #5AAE61; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;"}
+\> 0.2
+:::
+
+::: {style="background-color: #1B7837; width: 50px; height: 20px; color: white; line-height: 20px; text-align: center;"}
+\> 0.3
+:::
+:::
+
+::: {style="font-size: 15px; font-weight: no;"}
+In the upcoming charts, we employ a sequential color scheme where darker
+shades indicate higher values in the subsequent graphs.
+:::
 
 ## Weekly Comparison
 
-Utilize the slider to visualize the evolution of hourly average total flow traffic for Citi-Bikes across New York stations throughout the weekdays on between 2013 - 2023.
+Utilize the slider to visualize the evolution of hourly average total
+flow traffic for Citi-Bikes across New York stations throughout the
+weekdays on between 2013 - 2023.
 
 <label for="weekdaySlider">Select a Weekday:</label>
 <input type="range" id="weekdaySlider" min="0" max="6" value="0">
-<span id="sliderWeekdayValue">Sunday</span>
+[Sunday]{#sliderWeekdayValue}
 
 <div>
-<p>The graph illustrates how the **Total Flow** varies throughout the days of the week. </p>
-<div id="weekday_total" style="height: 300px;"></div>
+
+<p>The graph illustrates how the **Total Flow** varies throughout the
+days of the week.</p>
+
+::: {#weekday_total style="height: 300px;"}
+:::
+
 </div>
 
+## Month Comparison
 
-## Month Comparison 
+Utilize the slider to visualize the evolution of hourly average total
+flow traffic for Citi-Bikes across New York stations throughout the
+months between 2013 - 2023.
 
-Utilize the slider to visualize the evolution of hourly average total flow traffic for Citi-Bikes across New York stations throughout the months between 2013 - 2023.
-
-  <label for="monthSlider">Select Month:</label>
-  <input type="range" id="monthSlider" min="1" max="12" value="0">
-  <span id="sliderMonthValue">January</span>
+<label for="monthSlider">Select Month:</label>
+<input type="range" id="monthSlider" min="1" max="12" value="0">
+[January]{#sliderMonthValue}
 
 <div>
-<p>The graph illustrates how the **Total Flow** changes throughout the months.</p>
-<div id="months_total" style="height: 300px;"></div>
+
+<p>The graph illustrates how the **Total Flow** changes throughout the
+months.</p>
+
+::: {#months_total style="height: 300px;"}
+:::
+
 </div>
+
 <!-- Include Leaflet CSS and JS -->
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+```{=html}
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-
+```
 <!-- Include D3.js -->
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 
+```{=html}
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+```
 <!-- Reference to your JavaScript file -->
 
+```{=html}
 <script src="scripts/year_netflow.js"></script>
-
+```
+```{=html}
 <script src="scripts/year_totalflow.js"></script>
-
+```
+```{=html}
 <script src="scripts/weekday_totalflow.js"></script>
-
+```
+```{=html}
 <script src="scripts/months_totalflow.js"></script>
+```

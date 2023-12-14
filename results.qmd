@@ -1,1 +1,808 @@
 # Results
+
+## Data Set up and Prep
+
+### Load Libraries
+
+```{r message=FALSE}
+library(ggplot2)
+library(purrr)
+library(leaflet.extras)
+library(shiny)
+library(tidyverse)
+library(readr)
+library(leaflet)
+library(dplyr)
+library(tidyr)
+library(httr)
+library(sf)
+library(forcats)
+library(gridExtra)
+library(patchwork)
+library(rsconnect)
+suppressPackageStartupMessages(library(leaflet))
+```
+
+### Read in Data
+
+```{r message=FALSE}
+# Set the working directory to the project root (do this once per session)
+
+# Read the file using a relative path
+file_path <- "/Users/karmaistanbouli/Desktop/Columbia-MSDS/NYC_CitiBike_Viz/⭐️Project Code/Cleaned Data p/Grouped_Data"
+# Read "data_by_month.rds" into a dataframe named "data_by_month"
+data_by_month <- readRDS(file.path(file_path, "data_by_month.rds"))
+
+# Read "data_by_year.rds" into a dataframe named "data_by_year"
+data_by_year <- readRDS(file.path(file_path, "data_by_year.rds"))
+
+# Read "data_by_weekdy.rds" into a dataframe named "data_by_weekdy"
+data_by_weekdy <- readRDS(file.path(file_path, "data_by_weekdy.rds"))
+
+# Read "data_by_season.rds" into a dataframe named "data_by_season"
+data_by_season <- readRDS(file.path(file_path, "data_by_season.rds"))
+
+data_by_day <- readRDS(file.path(file_path, "data_by_day.rds"))
+```
+
+### Add Net Flow and Total Flow Columns
+
+```{r}
+
+data_by_year <- data_by_year %>%
+  mutate(total_flow = inflow + outflow,
+         net_flow = inflow - outflow)
+
+data_by_month <- data_by_month %>%
+  mutate(total_flow = inflow + outflow,
+         net_flow = inflow - outflow)
+
+data_by_weekdy <- data_by_weekdy %>%
+  mutate(total_flow = inflow + outflow,
+         net_flow = inflow - outflow)
+
+data_by_day <- data_by_day %>%
+  mutate(total_flow = inflow + outflow,
+         net_flow = inflow - outflow)
+
+data_by_season <- data_by_season %>%
+  mutate(total_flow = inflow + outflow,
+         net_flow = inflow - outflow)
+
+```
+
+### Fetch the Live data to get Station Info
+
+```{r}
+
+fetch_bike_data <- function(api_url) {
+  # Sending a GET request to the API
+  response <- GET(api_url)
+  
+  # Checking the status of the response
+  if (status_code(response) == 200) {
+    # Parsing the content of the response to a list
+    api_data <- content(response, "parsed")
+  } else {
+    cat("Failed to retrieve data: HTTP status", status_code(response), "\n")
+    return(NULL)
+  }
+  
+  station_raw <- api_data$data$stations
+  
+  # Transforming the nested list into a dataframe
+  databike_raw <- map_dfr(station_raw, ~flatten_df(as.data.frame(.x)))
+  
+  return(databike_raw)
+}
+
+url <- "https://gbfs.lyft.com/gbfs/2.3/bkn/en/station_information.json"
+databike_raw<- fetch_bike_data(url)
+api_dict <- subset(databike_raw, select = c("name", "lat", "lon", "capacity"))
+
+```
+
+### Creating Function to Add Station Info to DF
+
+```{r}
+
+#function to add station info from api to dataframe
+
+add_station_info <- function(df, api_dict) {
+  
+# Convert station_info_dict to a dataframe
+  
+# Convert lon, lat, and capacity to numeric
+  
+  api_dict[, c("lon", "lat", "capacity")] <- lapply(api_dict[, c("lon", "lat", "capacity")], as.numeric)
+  
+# Merge df with station_info_df based on station name
+  result <- left_join(df, api_dict, by = c("variable" = "name"))
+  
+  
+# Return the result
+  return(result)
+}
+```
+
+### Merge Melted Data with Station Information
+
+```{r}
+# joining station info from api to each dataframe
+
+data_by_year$variable <- as.character(data_by_year$variable)
+data_by_month$variable <- as.character(data_by_month$variable)
+data_by_season$variable <- as.character(data_by_season$variable)
+data_by_weekdy$variable <- as.character(data_by_weekdy$variable)
+
+data_by_year$year <- as.numeric(data_by_year$year)
+data_by_month$month <- as.numeric(data_by_month$month)
+
+# joining data by year with api data using function
+data_by_year_join <- add_station_info(data_by_year, api_dict)
+
+data_by_month_join <- add_station_info(data_by_month, api_dict)
+
+data_by_weekdy_join <- add_station_info(data_by_weekdy, api_dict)
+
+data_by_season_join <- add_station_info(data_by_season, api_dict)
+
+data_by_day_join <- add_station_info(data_by_day, api_dict)
+
+data_by_day_join$day <- as.Date(data_by_day_join$day, format = "%Y-%m-%d")
+
+
+#Changing lon lat to numeric
+data_by_year_join$lat <- as.numeric(data_by_year_join$lat)
+data_by_year_join$lon <- as.numeric(data_by_year_join$lon)
+
+data_by_month_join$lat <- as.numeric(data_by_month_join$lat)
+data_by_month_join$lon <- as.numeric(data_by_month_join$lon)
+```
+
+### Function to add Neighborhood Data to Merged Data
+
+```{r message=FALSE}
+
+suppressMessages({
+# Load GeoJSON file
+neighborhood_boundaries <- st_read("⭐️Project Code/ny-nbhd.geoj")
+
+# Function to perform spatial join
+add_nbhd_info <- function(data_frame) {
+  # Assuming your station data has latitude and longitude columns named "lat" and "lon"
+  stations_sf <- st_as_sf(data_frame, coords = c("lon", "lat"), crs = 4326)
+  
+  # Perform spatial join
+  joined_data <- st_join(stations_sf, neighborhood_boundaries)
+  
+  return(joined_data)
+}})
+```
+
+### Adding Neighborhood Data to Merged Data
+
+```{r}
+
+data_by_month_join <- data_by_month_join %>%
+  filter(!is.na(lon) & !is.na(lat))
+
+data_by_weekdy_join <-data_by_weekdy_join  %>%
+filter(!is.na(lon) & !is.na(lat))
+
+data_by_year_join <- data_by_year_join %>%
+  filter(!is.na(lon) & !is.na(lat))
+
+data_by_season_join <-data_by_season_join %>%
+filter(!is.na(lon) & !is.na(lat))
+
+data_by_month_join_nbhd <- add_nbhd_info(data_by_month_join)
+data_by_year_join_nbhd <- add_nbhd_info(data_by_year_join)
+data_by_weekdy_join_nbhd <- add_nbhd_info(data_by_weekdy_join)
+data_by_season_join_nbhd <- add_nbhd_info(data_by_season_join)
+```
+
+## Citi Bike Hourly Average Bike Flow
+
+We begin our exploration with an overview of Citi Bike's ridership growth since its inception in 2013. In our research, we use average hourly inflow and outflow of bikes to and from stations as an indicator of ridership growth and overall demand for the bike-sharing service.
+
+### Hourly Average Citi Bike Flow by Day
+
+The following chart showcases the evolving trends in activity over the years. Each bar on the graph represents the average hourly inflow of riders across all stations on a specific day.
+
+What we observe is that average hourly inflow stayed consistent throughout the years. Although we would expect an increasing average considering the company's booming popularity, the consistent average hourly inflow makes sense since the number of stations increased from 330 in 2013 to almost 2,000 today.
+
+The chart also reveals cyclical patterns showing periodic peaks and troughs throughout the years. These cycles suggest the influence of external factors such as season, weather and day of week. Note: we discuss the visible gap in the second half of 2021 in our missing data analysis.
+
+```{r fig.width=10}
+
+# Aggregating flow data by day
+
+data_by_day_agg <- data_by_day_join %>%
+  filter(total_flow != 0) %>%
+  group_by(day) %>%
+  summarize(
+    avg_inflow = mean(inflow, na.rm = TRUE),
+    avg_outflow = mean(outflow, na.rm = TRUE),
+    avg_netflow = mean(net_flow, na.rm = TRUE),
+    avg_totalflow = mean(total_flow, na.rm = TRUE),
+    total_inflow = sum(inflow, na.rm = TRUE),
+    total_outflow = sum(outflow, na.rm = TRUE),
+    totalflow = sum(total_flow, na.rm = TRUE)
+  )
+
+# Convert "day" to a date format
+data_by_day_agg$day <- as.Date(data_by_day_agg$day)
+
+
+# Creating x-axis label breaks
+breaks <- seq(min(data_by_day_agg$day), max(data_by_day_agg$day), by = "3 month")
+
+plot1 <- ggplot(data_by_day_agg, aes(x = day, y = avg_inflow)) +
+  geom_bar(stat = "identity", fill = 'cornflowerblue', width = 2) +
+  labs(title = "Average Hourly Flow by Day",
+       x = "Date",
+       y = "Flow") +
+  theme_minimal() +
+  theme_minimal() +
+  theme(axis.title = element_text(face = "bold"),
+    plot.title = element_text(size = 15,
+        face = "bold", vjust = 0),
+    axis.text.x = element_text(angle = 45, hjust = 1))+
+  scale_fill_manual(values = c("avg_inflow" = "dodgerblue", "avg_outflow" = "mediumseagreen"))+
+  scale_x_date(date_labels = "%b %Y", breaks = breaks)
+
+
+plot1
+```
+
+In the chart below, we narrow our focus on days between 2017 and 2019. With this view, monthly and seasonal trends are more obvious. It is not surprising that average hourly inflow is lower in the colder month and higher in the Summer and Fall.
+
+```{r fig.width=10}
+
+data_by_day_agg <- data_by_day_agg  %>%
+  filter(year(day)>= 2017& year(day) <= 2019)
+
+plot2 <- ggplot(data_by_day_agg, aes(x = day, y = avg_totalflow)) +
+   geom_bar(stat = "identity", fill = "cornflowerblue") +
+  labs(title = "Average Hourly Flow by Day (2017 - 2019)",
+       x = "Date",
+       y = "Flow") +
+  theme_minimal() +
+  scale_x_date(date_labels = "%b %Y", date_breaks = "5 months")+
+  theme_minimal() +
+  theme(axis.title = element_text(face = "bold"),
+    plot.title = element_text(size = 15,
+        face = "bold", vjust = 0),
+    axis.text.x = element_text(angle = 45, hjust = 1))+
+  scale_fill_manual(values = c("avg_inflow" = "dodgerblue", "avg_outflow" = "mediumseagreen"))
+
+
+plot2
+```
+
+### Citi Bike Hourly Average Flow by Month and Season
+
+Aggregating average hourly inflow across stations by month and by season underscores these cyclical trends:
+
+```{r fig.width=10}
+
+# changing month values from 1-12 to month names
+
+data_by_month_join <- data_by_month_join %>%
+  mutate(month = factor(as.integer(month), levels = 1:12, labels = month.name))
+
+# aggregating data by month
+data_by_month_agg <- data_by_month_join %>%
+  filter(total_flow!= 0) %>%
+  group_by(month) %>%
+  summarize(
+    avg_inflow = mean(inflow, na.rm = TRUE),
+    avg_outflow = mean(outflow, na.rm = TRUE),
+    avg_netflow = mean(net_flow, na.rm = TRUE),    
+    avg_totalflow = mean(total_flow, na.rm = TRUE),
+    total_inflow = sum(inflow, na.rm = TRUE),
+    total_outflow = sum(outflow, na.rm = TRUE),
+    totalflow = sum(inflow, na.rm = TRUE)
+  )
+
+# aggregating data by season
+data_by_season_agg <- data_by_season %>%
+  filter(total_flow!= 0) %>%
+  group_by(season) %>%
+  summarize(
+    avg_inflow = mean(inflow, na.rm = TRUE),
+    avg_outflow = mean(outflow, na.rm = TRUE),
+    avg_netflow = mean(net_flow, na.rm = TRUE),   
+    avg_totalflow = mean(total_flow, na.rm = TRUE),
+    total_inflow = sum(inflow, na.rm = TRUE),
+    total_outflow = sum(outflow, na.rm = TRUE),
+    totalflow = sum(inflow, na.rm = TRUE)
+  )
+
+# pivot longer to get flow types (inflow/outflow)
+
+avg_by_month_long <- data_by_month_agg %>%
+  pivot_longer(cols = c("avg_inflow", "avg_outflow"), names_to = "flow_type", values_to = "avg_flow")
+
+avg_by_season_long <- data_by_season_agg %>%
+  pivot_longer(cols = c("avg_inflow", "avg_outflow"), names_to = "flow_type", values_to = "avg_flow")
+
+plot4 <- avg_by_month_long %>%
+  ggplot(aes(x = month, y = avg_flow, fill = flow_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Average Hourly Flow by Month",
+       x = "Month",
+       y = "Average Hourly Flow") +
+  theme_minimal() +
+  theme(axis.title = element_text(face = "bold"),
+    plot.title = element_text(size = 15,
+        face = "bold", vjust = 0),
+    axis.text.x = element_text(angle = 45, hjust = 1))+
+  scale_fill_manual(values = c("avg_inflow" = "dodgerblue", "avg_outflow" = "mediumseagreen"))
+
+
+plot5 <- avg_by_season_long %>%
+  ggplot(aes(x = season, y = avg_flow, fill = flow_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Average Hourly Flow by Season",
+       x = "Season",
+       y = "Average Hourly Flow") +
+ theme_minimal() +
+  theme(axis.title = element_text(face = "bold"),
+    plot.title = element_text(size = 15,
+        face = "bold", vjust = 0),
+    axis.text.x = element_text(angle = 45, hjust = 1))+
+  scale_fill_manual(values = c("avg_inflow" = "dodgerblue", "avg_outflow" = "mediumseagreen"))
+
+
+month_season_flow <- plot4 + plot5 +
+  plot_layout(ncol = 2, guides = 'collect', widths = c(1, 1)) & 
+  theme(legend.position = 'right', legend.box = 'horizontal', legend.direction = 'vertical')
+
+
+print(month_season_flow)
+```
+
+### Citi Bike Hourly Average Flow by Day of Week
+
+We can also aggregate by day of week to see how average hourly inflow differs across different days of the week. Trends are not very obvious here but we can still see that ridership is higher on weekdays, unexpectedly:
+
+```{r fig.width=8}
+
+
+# changing days from 1-7 to actual day names
+
+data_by_weekday <- data_by_weekdy %>%
+  filter(total_flow!= 0) %>%
+  mutate(
+    weekday = factor(weekday, levels = c("Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+  )
+
+# aggregating data by day of week
+
+data_by_weekdy_agg <- data_by_weekdy %>%
+  group_by(weekday) %>%
+  summarize(
+    avg_inflow = mean(inflow, na.rm = TRUE),
+    avg_outflow = mean(outflow, na.rm = TRUE),
+    avg_netflow = mean(net_flow, na.rm = TRUE),
+    avg_totalflow = mean(total_flow, na.rm = TRUE),
+    total_inflow = sum(inflow, na.rm = TRUE),
+    total_outflow = sum(outflow, na.rm = TRUE),
+    totalflow = sum(inflow, na.rm = TRUE)
+  )
+
+#pivot longer
+avg_by_weekdy_long <- data_by_weekdy_agg %>%
+  pivot_longer(cols = c("avg_inflow", "avg_outflow"), names_to = "flow_type", values_to = "avg_flow")
+
+# reorder the days of the week
+avg_by_weekdy_long$weekday <- fct_relevel(avg_by_weekdy_long$weekday, "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
+
+plot6 <- avg_by_weekdy_long %>%
+  ggplot(aes(x = weekday, y = avg_flow, fill = flow_type)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Average Daily Flow by Day of Week",
+       x = "Day",
+       y = "Average Daily Flow") +
+  theme_minimal() +
+    theme(axis.title = element_text(face = "bold"),
+    plot.title = element_text(size = 15,
+        face = "bold", vjust = 0)) +
+  scale_fill_manual(values = c("avg_inflow" = "dodgerblue", "avg_outflow" = "forestgreen"))
+
+plot6
+```
+
+## Citi Bike Hourly Average Bike Net Flow
+
+Now that we have seen how average hourly total flow differs by year, season, month, and day of week, we will consider net flow as another metric to analyze station data. Net flow provides valuable insights into the dynamics of bike activity within a station, offering a nuanced understanding of the balance between incoming and outgoing bikes over time. The average hourly net flow, when aggregated by different temporal dimensions such as year, season, or month, serves as a key indicator of station popularity and usage patterns.
+
+A positive net flow indicates a higher influx of bikes, possibly suggesting that stations are more popular entry points, potentially located in busy or central areas.While negative net flow highlights stations with greater bike outflow, suggesting they are favored as exit points, possibly located near residential or recreational areas. Analyzing net flow trends over various time intervals allows for the identification of seasonal or monthly variations.
+
+### Citi Bike Hourly Average Net Flow by Year, Month, Season, Day
+
+The diverging bar charts below reveals that on average, net flow is negative across stations.
+
+```{r fig.height = 8, fig.width = 10, message=FALSE}
+
+data_by_year_agg <- data_by_year %>%
+  filter(total_flow!= 0) %>%
+  group_by(year) %>%
+  summarize(
+    avg_inflow = mean(inflow, na.rm = TRUE),
+    avg_outflow = mean(outflow, na.rm = TRUE),
+    avg_netflow = mean(net_flow, na.rm = TRUE),   
+    avg_totalflow = mean(total_flow, na.rm = TRUE),
+    total_inflow = sum(inflow, na.arm = TRUE),
+    total_outflow = sum(outflow, na.arm = TRUE),
+    totalflow = sum(inflow, na.arm = TRUE)
+  )
+
+plot7 <- data_by_year_agg %>%
+  ggplot(aes(x = avg_netflow, y = factor(year), fill = factor(sign(avg_netflow)))) +
+  geom_bar(stat = "identity", position = "stack", color = "white", width = 0.7) +
+  labs(title = "Average Net Flow By Year",
+       x = "",
+       y = "Year") +
+  scale_fill_manual(values = c("-1" = "dodgerblue", "1" = "mediumseagreen"), guide = FALSE) +
+  theme_minimal() +
+  theme(axis.title = element_text(face = "bold"),
+    plot.title = element_text(size = 15,
+        face = "bold", vjust = 0))
+
+# Show the plot
+plot8 <- data_by_month_agg %>%
+  ggplot(aes(x = avg_netflow, y = factor(month), fill = factor(sign(avg_netflow)))) +
+  geom_bar(stat = "identity", position = "stack", color = "white", width = 0.7) +
+  labs(title = "Average Net Flow By Month",
+       x = "",
+       y = "Month") +
+  scale_fill_manual(values = c("-1" = "dodgerblue", "1" = "mediumseagreen"), guide = "none") +
+  theme_minimal() +
+  theme(axis.title = element_text(face = "bold"),
+    plot.title = element_text(size = 15,
+        face = "bold", vjust = 0))
+
+
+plot9 <- data_by_weekdy_agg %>%
+  ggplot(aes(x = avg_netflow, y = factor(weekday), fill = factor(sign(avg_netflow)))) +
+  geom_bar(stat = "identity", position = "stack", color = "white", width = 0.7) +
+  labs(title = "Average Net Flow By Day of Week",
+       x = "Average Hourly Net Flow",
+       y = "Day") +
+  scale_fill_manual(values = c("-1" = "dodgerblue", "1" = "mediumseagreen"), guide = FALSE) +
+  theme_minimal() +
+    theme(axis.title = element_text(face = "bold"),
+    plot.title = element_text(size = 15,
+        face = "bold", vjust = 0))
+
+# Show the plot
+
+plot10 <- data_by_season_agg %>%
+  ggplot(aes(x = avg_netflow, y = factor(season), fill = factor(sign(avg_netflow)))) +
+  geom_bar(stat = "identity", position = "stack", color = "white", width = 0.7) +
+  labs(title = "Average Net Flow By Season",
+       x = "Average Hourly Net Flow",
+       y = "Season") +
+  scale_fill_manual(values = c("-1" = "dodgerblue", "1" = "mediumseagreen"), guide = FALSE) +
+  theme_minimal() +
+    theme(axis.title = element_text(face = "bold"),
+    plot.title = element_text(size = 15,
+        face = "bold", vjust = 0))
+
+nf_plots <- plot7 + plot8 + plot9 + plot10 +
+  plot_layout(ncol = 2, guides = 'collect', widths = c(1, 1)) 
+
+
+
+# Display the combined plot
+print(nf_plots)
+```
+
+## Citi Bike Hourly Average Flow by Neighborhood
+
+As it is clear that Citi Bike average hourly flow remained consistent over the years, subject to some cyclical trends due to external factors such as weather and season, we will proceed with more interesting data exploration. More specifically, we are going to explore how growth is distributed across different neighborhoods and boroughs of New York.
+
+### Hourly Average Flow by Neighborhood and Year
+
+The following charts shows average hourly inflow and outlflow across stations from 2013 to October 2023, aggregated by neighborhood. The two plot gives us the same result, which is that activity, both inflow and outflow, is concentrated in Manhattan.The graph shows that the neighborhoods with the highest hourly average inflow of bikes to stations are all in Manhattan, followed by Brooklyn. Neighborhoods in the Bronx and Queens show very low activity.
+
+```{r fig.height=8, fig.width=8, message = FALSE}
+# Group by neighborhood and borough, summarize the data
+data_by_year_nbhd <- data_by_year_join_nbhd %>%
+  filter(total_flow != 0) %>%
+  group_by(neighborhood, borough) %>%
+  summarize(
+    avg_inflow = mean(inflow, na.rm = TRUE),
+    avg_outflow = mean(outflow, na.rm = TRUE),
+    avg_netflow = mean(net_flow, na.rm = TRUE),   
+    avg_totalflow = mean(total_flow, na.rm = TRUE),
+    total_inflow = sum(inflow, na.rm = TRUE),
+    total_outflow = sum(outflow, na.rm = TRUE)
+  ) %>%
+  ungroup()  
+
+# Remove rows where borough is NA
+data_by_year_nbhd <- data_by_year_nbhd %>%
+  filter(!is.na(borough))
+
+data_by_year_nbhd_in <- data_by_year_nbhd %>%
+  mutate(
+    borough = fct_reorder(borough, avg_inflow, .desc = TRUE),
+    neighborhood = fct_reorder(neighborhood, avg_inflow, .desc = TRUE)
+  )
+
+data_by_year_nbhd_out <- data_by_year_nbhd %>%
+  mutate(
+    borough = fct_reorder(borough, avg_outflow, .desc = TRUE),
+    neighborhood = fct_reorder(neighborhood, avg_outflow, .desc = TRUE)
+  )
+
+
+# Plotting the data
+plot11 <- data_by_year_nbhd_in %>%
+  ggplot(aes(x = neighborhood, y = avg_inflow, fill = borough)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Average Hourly Inflow by Year",
+       x = " ",
+       y = "Average Hourly Inflow") +
+  theme_minimal() +
+  facet_wrap(~borough, ncol = 1) +
+  theme(axis.text.x = element_blank(), legend.position = "none",axis.title = element_text(face = "bold"),
+    plot.title = element_text(size = 15,
+        face = "bold", vjust = 0))
+
+plot11
+```
+
+```{r fig.height=8, fig.width=8, message = FALSE}
+
+plot12 <- data_by_year_nbhd_out %>%
+  ggplot(aes(x = neighborhood, y = avg_outflow, fill = borough)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Average Hourly Outflow by Year",
+       x = " ",
+       y = "Average Hourly Outflow") +
+  theme_minimal() +
+  facet_wrap(~borough, ncol = 1) +
+  theme(axis.text.x = element_blank(), legend.position = "none",axis.title = element_text(face = "bold"),
+    plot.title = element_text(size = 15,
+        face = "bold", vjust = 0))
+
+plot12
+```
+
+### Hourly Average Flow by Neighborhood and Season
+
+Aggregating by Neighborhood and Season emphasizes both seasonal trends and Manhattan's leading position as the most popular exit and entry point.
+
+```{r fig.height=8, fig.width=8, message = FALSE}
+
+
+# Assuming your seasons are in a factor variable named 'season'
+# Make sure 'season' is a factor with levels arranged in the desired order
+
+data_by_season_nbhd <- data_by_season_join_nbhd %>%
+  filter(total_flow != 0) %>%
+  group_by(neighborhood, borough, season) %>%
+  summarize(
+    avg_inflow = mean(inflow, na.rm = TRUE),
+    avg_outflow = mean(outflow, na.rm = TRUE),
+    avg_netflow = mean(net_flow, na.rm = TRUE),   
+    avg_totalflow = mean(total_flow, na.rm = TRUE),
+    total_inflow = sum(inflow, na.rm = TRUE),
+    total_outflow = sum(outflow, na.rm = TRUE)
+  ) %>%
+  ungroup()  
+
+# Remove rows where borough is NA
+data_by_season_nbhd <- data_by_season_nbhd %>%
+  filter(!is.na(borough))
+
+data_by_season_nbhd_in <- data_by_season_nbhd %>%
+  mutate(
+    borough = fct_reorder(borough, avg_inflow, .desc = TRUE),
+    neighborhood = fct_reorder(neighborhood, avg_inflow, .desc = TRUE)
+  )
+
+
+# Plotting the data with faceting
+plot11 <- data_by_season_nbhd_in %>%
+  ggplot(aes(x = neighborhood, y = avg_inflow, fill = borough)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Avg Hourly Inflow by Season",
+       x = " ",
+       y = "Average Hourly Inflow") +
+  theme_minimal() +
+  facet_grid(borough ~ season) +
+  theme(axis.text.x = element_blank(), legend.position = "none", axis.title = element_text(face = "bold"),
+        plot.title = element_text(size = 15, face = "bold", vjust = 0))
+plot11
+```
+
+```{r fig.height=8, fig.width=8, message = FALSE}
+
+data_by_season_nbhd_out <- data_by_season_nbhd %>%
+  mutate(
+    borough = fct_reorder(borough, avg_outflow, .desc = TRUE),
+    neighborhood = fct_reorder(neighborhood, avg_outflow, .desc = TRUE)
+  )
+
+plot12 <- data_by_season_nbhd_out %>%
+  ggplot(aes(x = neighborhood, y = avg_outflow, fill = borough)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Avg Hourly Outflow by Season",
+       x = " ",
+       y = "Average Hourly Outflow") +
+  theme_minimal() +
+  facet_grid(borough ~ season) +
+  theme(axis.text.x = element_blank(), legend.position = "none", axis.title = element_text(face = "bold"),
+        plot.title = element_text(size = 15, face = "bold", vjust = 0))
+
+plot12
+
+```
+
+### Hourly Average Flow by Neighborhood and Day of Week
+
+```{r fig.height=8, fig.width=8}
+
+
+data_by_weekdy_nbhd <- data_by_weekdy_join_nbhd %>%
+  filter(total_flow != 0) %>%
+  group_by(neighborhood, borough, weekday) %>%
+  summarize(
+    avg_inflow = mean(inflow, na.rm = TRUE),
+    avg_outflow = mean(outflow, na.rm = TRUE),
+    avg_netflow = mean(net_flow, na.rm = TRUE),   
+    avg_totalflow = mean(total_flow, na.rm = TRUE),
+    total_inflow = sum(inflow, na.rm = TRUE),
+    total_outflow = sum(outflow, na.rm = TRUE)
+  ) %>%
+  ungroup()  
+
+# Remove rows where borough is NA
+data_by_weekdy_nbhd <- data_by_weekdy_nbhd %>%
+  filter(!is.na(borough))
+
+data_by_weekdy_nbhd_in <- data_by_weekdy_nbhd %>%
+  mutate(
+    borough = fct_reorder(borough, avg_inflow, .desc = TRUE),
+    neighborhood = fct_reorder(neighborhood, avg_inflow, .desc = FALSE)
+  )
+
+# Plotting the data with faceting
+plot14 <- data_by_weekdy_nbhd_in %>%
+  ggplot(aes(x = neighborhood, y = avg_inflow, fill = borough)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Avg Hourly Inflow by Day",
+       x = " ",
+       y = "Average Hourly Inflow") +
+  theme_minimal() +
+  facet_grid(borough ~ fct_relevel(weekday, "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")) +
+  theme(axis.text.x = element_blank(), legend.position = "none", axis.title = element_text(face = "bold"),
+        plot.title = element_text(size = 15, face = "bold", vjust = 0))
+
+plot14
+
+
+```
+
+```{r fig.height=8, fig.width=8}
+
+data_by_weekdy_nbhd_out <- data_by_weekdy_nbhd %>%
+  mutate(
+    borough = fct_reorder(borough, avg_outflow, .desc = TRUE),
+    neighborhood = fct_reorder(neighborhood, avg_outflow, .desc = TRUE))
+    
+plot15 <- data_by_weekdy_nbhd_out %>%
+  ggplot(aes(x = neighborhood, y = avg_outflow, fill = borough)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Avg Hourly Outflow by Day",
+       x = " ",
+       y = "Average Hourly Outflow") +
+  theme_minimal() +
+  facet_grid(borough ~ fct_relevel(weekday, "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")) +
+  theme(axis.text.x = element_blank(), legend.position = "none", axis.title = element_text(face = "bold"),
+        plot.title = element_text(size = 15, face = "bold", vjust = 0))
+
+plot15
+```
+
+## Citi Bike Hourly Average Net Flow by Neighborhood
+
+### Hourly Average Net flow by Neighborhood Over the Years
+
+In the chart below, we plotted average hourly net flow over the years across stations, faceted by neighborhood. Again, we can see that the large majority of stations have a negative net flow, furthermore, this chart shows that the stations in Manhattan are by far the most popular.
+
+```{r fig.height= 13, fig.width = 10}
+# Filter and reorder data
+data_by_year_nbhd <- data_by_year_nbhd %>%
+  filter(avg_netflow != 0) %>%
+  mutate(
+    borough = fct_reorder(borough, abs(avg_netflow), .desc = TRUE),
+    neighborhood = fct_reorder(neighborhood, abs(avg_netflow), .desc = FALSE)
+  )
+
+# Plotting the data with filtering inside ggplot
+plot16 <- data_by_year_nbhd %>%
+  filter(avg_netflow != 0) %>%
+  ggplot(aes(x = avg_netflow, y = neighborhood, fill = borough)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Average Hourly Netflow Over the Years by Neighborhood",
+       x = " ",
+       y = "Average Hourly Netflow") +
+  theme_minimal() +
+  facet_wrap(~borough, ncol = 1, scales = "free_y") +
+  theme(legend.position = "none", strip.text = element_text(size = 15),  # Adjust the font size here
+        axis.title = element_text(face = "bold"),
+        plot.title = element_text(size = 15, face = "bold", vjust = 0))
+
+plot16
+```
+
+### Hourly Average Net Flow by Neighborhood and Season
+
+The following charts re-emphasize how average net flow is negative across seasons, stations, and neighborhoods. With Manhattan in the lead again, followed by Brooklyn. The neighborhoods with the highest net outflow are Central Park in Manhattan and Prospect Park in Brooklyn, followed by neighborhoods surrounding the parks and recreational areas like the Upper West Side, the Theatre District, Battery Park, Prospect Heights, to name a few.
+
+This suggests that demand for Citi Bikes are higher in popular recreational areas, potentially as an activity rather than a means of transportation, but can also suggest that riders use the bikes to leave those popular areas.
+
+In terms of station and bike re-balancing and bike availability, the data suggests that demand is excessive in those highlighted neighborhoods where situations with a shortage of bikes are more likely.
+
+```{r fig.height= 13, fig.width = 10}
+
+# Filter and reorder data
+data_by_season_nbhd <- data_by_season_nbhd %>%
+  filter(avg_netflow != 0) %>%
+  mutate(
+    borough = fct_reorder(borough, abs(avg_netflow), .desc = TRUE),
+    neighborhood = fct_reorder(neighborhood, abs(avg_netflow), .desc = FALSE)
+  )
+
+# Plotting the data with filtering inside ggplot
+plot17 <- data_by_season_nbhd %>%
+  filter(avg_netflow != 0) %>%
+  ggplot(aes(x = avg_netflow, y = neighborhood, fill = borough)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Average Hourly Netflow by Season",
+       x = " ",
+       y = "Average Hourly Netflow") +
+  theme_minimal() +
+  facet_grid(borough ~ season, scales = "free_y")  +
+  theme(legend.position = "none", strip.text = element_text(size = 15),  # Adjust the font size here
+        axis.title = element_text(face = "bold"),
+        plot.title = element_text(size = 15, face = "bold", vjust = 0))
+plot17
+```
+
+### Hourly Average Net Flow by Neighborhood and Day of Week
+
+```{r fig.height= 13, fig.width = 10}
+
+# Filter and reorder data
+data_by_weekdy_nbhd <- data_by_weekdy_nbhd %>%
+  filter(avg_netflow != 0) %>%
+  mutate(
+    borough = fct_reorder(borough, abs(avg_netflow), .desc = TRUE),
+    neighborhood = fct_reorder(neighborhood, abs(avg_netflow), .desc = FALSE)
+  )
+
+# Plotting the data with filtering inside ggplot
+plot18 <- data_by_weekdy_nbhd %>%
+  filter(avg_netflow != 0) %>%
+ggplot(aes(x = avg_netflow, y = neighborhood, fill = borough)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Average Hourly Netflow by Day",
+       x = " ",
+       y = "Average Hourly Netflow") +
+  theme_minimal() +
+  facet_grid(borough ~ fct_relevel(weekday, "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"),
+             scales = "free_y")  +
+  theme(legend.position = "none", strip.text = element_text(size = 15),  # Adjust the font size here
+        axis.title = element_text(face = "bold"),
+        plot.title = element_text(size = 15, face = "bold", vjust = 0))
+
+plot18
+```
