@@ -516,7 +516,7 @@ Geodetic CRS:  WGS 84</code></pre>
 <pre><code>Warning: `position_stack()` requires non-overlapping x intervals</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="results_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="960"></p>
+<p><img src="results_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="960"></p>
 </div>
 </div>
 <p>In the chart below, we narrow our focus on days between 2017 and 2019. With this view, monthly and seasonal trends are more obvious. It is not surprising that average hourly inflow is lower in the colder month and higher in the Summer and Fall.</p>
@@ -544,7 +544,7 @@ Geodetic CRS:  WGS 84</code></pre>
 <span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>plot2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="results_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="960"></p>
+<p><img src="results_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="960"></p>
 </div>
 </div>
 </section>
@@ -631,7 +631,7 @@ Geodetic CRS:  WGS 84</code></pre>
 <span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(month_season_flow)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="results_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="960"></p>
+<p><img src="results_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="960"></p>
 </div>
 </div>
 </section>
@@ -685,7 +685,7 @@ Geodetic CRS:  WGS 84</code></pre>
 <span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>plot6</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="results_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="768"></p>
+<p><img src="results_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="768"></p>
 </div>
 </div>
 </section>
@@ -739,39 +739,41 @@ Geodetic CRS:  WGS 84</code></pre>
 <span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">vjust =</span> <span class="dv">0</span>))</span>
 <span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>plot9 <span class="ot">&lt;-</span> data_by_weekdy_agg <span class="sc">%&gt;%</span></span>
-<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> avg_netflow, <span class="at">y =</span> <span class="fu">factor</span>(weekday), <span class="at">fill =</span> <span class="fu">factor</span>(<span class="fu">sign</span>(avg_netflow)))) <span class="sc">+</span></span>
-<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"stack"</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">width =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Average Net Flow By Day of Week"</span>,</span>
-<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Average Hourly Net Flow"</span>,</span>
-<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Day"</span>) <span class="sc">+</span></span>
-<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"-1"</span> <span class="ot">=</span> <span class="st">"dodgerblue"</span>, <span class="st">"1"</span> <span class="ot">=</span> <span class="st">"mediumseagreen"</span>), <span class="at">guide =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>),</span>
-<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">15</span>,</span>
-<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>        <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">vjust =</span> <span class="dv">0</span>))</span>
-<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the plot</span></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>data_by_weekdy_agg<span class="sc">$</span>weekday <span class="ot">&lt;-</span> <span class="fu">fct_relevel</span>(data_by_weekdy_agg<span class="sc">$</span>weekday, <span class="st">"Sunday"</span>, <span class="st">"Monday"</span>, <span class="st">"Tuesday"</span>, <span class="st">"Wednesday"</span>, <span class="st">"Thursday"</span>, <span class="st">"Friday"</span>, <span class="st">"Saturday"</span>)</span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>plot9 <span class="ot">&lt;-</span> data_by_weekdy_agg <span class="sc">%&gt;%</span></span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> avg_netflow, <span class="at">y =</span> <span class="fu">factor</span>(weekday), <span class="at">fill =</span> <span class="fu">factor</span>(<span class="fu">sign</span>(avg_netflow)))) <span class="sc">+</span></span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"stack"</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">width =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Average Net Flow By Day of Week"</span>,</span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Average Hourly Net Flow"</span>,</span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Day"</span>) <span class="sc">+</span></span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"-1"</span> <span class="ot">=</span> <span class="st">"dodgerblue"</span>, <span class="st">"1"</span> <span class="ot">=</span> <span class="st">"mediumseagreen"</span>), <span class="at">guide =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">15</span>,</span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>        <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">vjust =</span> <span class="dv">0</span>))</span>
 <span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>plot10 <span class="ot">&lt;-</span> data_by_season_agg <span class="sc">%&gt;%</span></span>
-<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> avg_netflow, <span class="at">y =</span> <span class="fu">factor</span>(season), <span class="at">fill =</span> <span class="fu">factor</span>(<span class="fu">sign</span>(avg_netflow)))) <span class="sc">+</span></span>
-<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"stack"</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">width =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Average Net Flow By Season"</span>,</span>
-<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Average Hourly Net Flow"</span>,</span>
-<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Season"</span>) <span class="sc">+</span></span>
-<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"-1"</span> <span class="ot">=</span> <span class="st">"dodgerblue"</span>, <span class="st">"1"</span> <span class="ot">=</span> <span class="st">"mediumseagreen"</span>), <span class="at">guide =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>),</span>
-<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">15</span>,</span>
-<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>        <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">vjust =</span> <span class="dv">0</span>))</span>
-<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a>nf_plots <span class="ot">&lt;-</span> plot7 <span class="sc">+</span> plot8 <span class="sc">+</span> plot9 <span class="sc">+</span> plot10 <span class="sc">+</span></span>
-<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">guides =</span> <span class="st">'collect'</span>, <span class="at">widths =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)) </span>
-<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the plot</span></span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a>plot10 <span class="ot">&lt;-</span> data_by_season_agg <span class="sc">%&gt;%</span></span>
+<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> avg_netflow, <span class="at">y =</span> <span class="fu">factor</span>(season), <span class="at">fill =</span> <span class="fu">factor</span>(<span class="fu">sign</span>(avg_netflow)))) <span class="sc">+</span></span>
+<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"stack"</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">width =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Average Net Flow By Season"</span>,</span>
+<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Average Hourly Net Flow"</span>,</span>
+<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Season"</span>) <span class="sc">+</span></span>
+<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"-1"</span> <span class="ot">=</span> <span class="st">"dodgerblue"</span>, <span class="st">"1"</span> <span class="ot">=</span> <span class="st">"mediumseagreen"</span>), <span class="at">guide =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">15</span>,</span>
+<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a>        <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">vjust =</span> <span class="dv">0</span>))</span>
+<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a>nf_plots <span class="ot">&lt;-</span> plot7 <span class="sc">+</span> plot8 <span class="sc">+</span> plot9 <span class="sc">+</span> plot10 <span class="sc">+</span></span>
+<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">guides =</span> <span class="st">'collect'</span>, <span class="at">widths =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)) </span>
 <span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the combined plot</span></span>
-<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(nf_plots)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the combined plot</span></span>
+<span id="cb15-74"><a href="#cb15-74" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(nf_plots)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: The `guide` argument in `scale_*()` cannot be `FALSE`. This was deprecated in
@@ -779,7 +781,7 @@ ggplot2 3.3.4.
 ℹ Please use "none" instead.</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="results_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="960"></p>
+<p><img src="results_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="960"></p>
 </div>
 </div>
 </section>
@@ -840,7 +842,7 @@ ggplot2 3.3.4.
 <span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a>plot11</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="results_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="768"></p>
+<p><img src="results_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="768"></p>
 </div>
 </div>
 <div class="cell">
@@ -861,7 +863,7 @@ ggplot2 3.3.4.
 <span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>plot12</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="results_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="768"></p>
+<p><img src="results_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="768"></p>
 </div>
 </div>
 </section>
@@ -902,7 +904,7 @@ ggplot2 3.3.4.
 <span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>plot11 <span class="ot">&lt;-</span> data_by_season_nbhd_in <span class="sc">%&gt;%</span></span>
 <span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> neighborhood, <span class="at">y =</span> avg_inflow, <span class="at">fill =</span> borough)) <span class="sc">+</span></span>
 <span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
-<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Avg Hourly Inflow by Season"</span>,</span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Avgerage Hourly Inflow by Season"</span>,</span>
 <span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">" "</span>,</span>
 <span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Average Hourly Inflow"</span>) <span class="sc">+</span></span>
 <span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
@@ -912,7 +914,7 @@ ggplot2 3.3.4.
 <span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>plot11</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="results_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="768"></p>
+<p><img src="results_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="768"></p>
 </div>
 </div>
 <div class="cell">
@@ -938,7 +940,7 @@ ggplot2 3.3.4.
 <span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>plot12</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="results_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="768"></p>
+<p><img src="results_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="768"></p>
 </div>
 </div>
 </section>
@@ -973,7 +975,7 @@ using the `.groups` argument.</code></pre>
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>data_by_weekdy_nbhd_in <span class="ot">&lt;-</span> data_by_weekdy_nbhd <span class="sc">%&gt;%</span></span>
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">borough =</span> <span class="fu">fct_reorder</span>(borough, avg_inflow, <span class="at">.desc =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">neighborhood =</span> <span class="fu">fct_reorder</span>(neighborhood, avg_inflow, <span class="at">.desc =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">neighborhood =</span> <span class="fu">fct_reorder</span>(neighborhood, avg_inflow, <span class="at">.desc =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the data with faceting</span></span>
@@ -991,7 +993,7 @@ using the `.groups` argument.</code></pre>
 <span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>plot14</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="results_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="768"></p>
+<p><img src="results_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="960"></p>
 </div>
 </div>
 <div class="cell">
@@ -1016,7 +1018,7 @@ using the `.groups` argument.</code></pre>
 <span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>plot15</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="results_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="768"></p>
+<p><img src="results_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="960"></p>
 </div>
 </div>
 </section>
@@ -1054,7 +1056,7 @@ using the `.groups` argument.</code></pre>
 <span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>plot16</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="results_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="960"></p>
+<p><img src="results_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="960"></p>
 </div>
 </div>
 </section>
@@ -1090,7 +1092,7 @@ using the `.groups` argument.</code></pre>
 <span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>plot17</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="results_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="960"></p>
+<p><img src="results_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="960"></p>
 </div>
 </div>
 </section>
@@ -1125,7 +1127,7 @@ using the `.groups` argument.</code></pre>
 <span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>plot18</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="results_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="960"></p>
+<p><img src="results_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid" width="1248"></p>
 </div>
 </div>
 

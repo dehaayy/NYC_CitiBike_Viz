@@ -4,7 +4,7 @@
 
 ### Load Libraries
 
-```{r message=FALSE}
+```{r, message=FALSE}
 library(ggplot2)
 library(purrr)
 library(leaflet.extras)
@@ -25,7 +25,7 @@ suppressPackageStartupMessages(library(leaflet))
 
 ### Read in Data
 
-```{r message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 # Set the working directory to the project root (do this once per session)
 
 # Read the file using a relative path
@@ -73,7 +73,7 @@ data_by_season <- data_by_season %>%
 
 ### Fetch the Live data to get Station Info
 
-```{r}
+```{r, message = FALSE, warning=FALSE}
 
 fetch_bike_data <- function(api_url) {
   # Sending a GET request to the API
@@ -104,7 +104,7 @@ api_dict <- subset(databike_raw, select = c("name", "lat", "lon", "capacity"))
 
 ### Creating Function to Add Station Info to DF
 
-```{r}
+```{r, message = FALSE, warning=FALSE}
 
 #function to add station info from api to dataframe
 
@@ -127,7 +127,7 @@ add_station_info <- function(df, api_dict) {
 
 ### Merge Melted Data with Station Information
 
-```{r}
+```{r, warning=FALSE}
 # joining station info from api to each dataframe
 
 data_by_year$variable <- as.character(data_by_year$variable)
@@ -162,7 +162,7 @@ data_by_month_join$lon <- as.numeric(data_by_month_join$lon)
 
 ### Function to add Neighborhood Data to Merged Data
 
-```{r message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 
 suppressMessages({
 # Load GeoJSON file
@@ -200,6 +200,8 @@ data_by_month_join_nbhd <- add_nbhd_info(data_by_month_join)
 data_by_year_join_nbhd <- add_nbhd_info(data_by_year_join)
 data_by_weekdy_join_nbhd <- add_nbhd_info(data_by_weekdy_join)
 data_by_season_join_nbhd <- add_nbhd_info(data_by_season_join)
+
+
 ```
 
 ## Citi Bike Hourly Average Bike Flow
@@ -214,7 +216,7 @@ What we observe is that average hourly inflow stayed consistent throughout the y
 
 The chart also reveals cyclical patterns showing periodic peaks and troughs throughout the years. These cycles suggest the influence of external factors such as season, weather and day of week. Note: we discuss the visible gap in the second half of 2021 in our missing data analysis.
 
-```{r fig.width=10}
+```{r fig.width=10, warning=FALSE, message=FALSE}
 
 # Aggregating flow data by day
 
@@ -425,7 +427,7 @@ A positive net flow indicates a higher influx of bikes, possibly suggesting that
 
 The diverging bar charts below reveals that on average, net flow is negative across stations.
 
-```{r fig.height = 8, fig.width = 10, message=FALSE}
+```{r fig.height = 8, fig.width = 10,  warning=FALSE, message=FALSE}
 
 data_by_year_agg <- data_by_year %>%
   filter(total_flow!= 0) %>%
@@ -465,6 +467,8 @@ plot8 <- data_by_month_agg %>%
     plot.title = element_text(size = 15,
         face = "bold", vjust = 0))
 
+
+data_by_weekdy_agg$weekday <- fct_relevel(data_by_weekdy_agg$weekday, "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
 
 plot9 <- data_by_weekdy_agg %>%
   ggplot(aes(x = avg_netflow, y = factor(weekday), fill = factor(sign(avg_netflow)))) +
@@ -612,7 +616,7 @@ data_by_season_nbhd_in <- data_by_season_nbhd %>%
 plot11 <- data_by_season_nbhd_in %>%
   ggplot(aes(x = neighborhood, y = avg_inflow, fill = borough)) +
   geom_bar(stat = "identity") +
-  labs(title = "Avg Hourly Inflow by Season",
+  labs(title = "Avgerage Hourly Inflow by Season",
        x = " ",
        y = "Average Hourly Inflow") +
   theme_minimal() +
@@ -647,7 +651,7 @@ plot12
 
 ### Hourly Average Flow by Neighborhood and Day of Week
 
-```{r fig.height=8, fig.width=8}
+```{r fig.height=8, fig.width=10,  warning=FALSE, message=FALSE}
 
 
 data_by_weekdy_nbhd <- data_by_weekdy_join_nbhd %>%
@@ -670,7 +674,7 @@ data_by_weekdy_nbhd <- data_by_weekdy_nbhd %>%
 data_by_weekdy_nbhd_in <- data_by_weekdy_nbhd %>%
   mutate(
     borough = fct_reorder(borough, avg_inflow, .desc = TRUE),
-    neighborhood = fct_reorder(neighborhood, avg_inflow, .desc = FALSE)
+    neighborhood = fct_reorder(neighborhood, avg_inflow, .desc = TRUE)
   )
 
 # Plotting the data with faceting
@@ -690,7 +694,7 @@ plot14
 
 ```
 
-```{r fig.height=8, fig.width=8}
+```{r fig.height=8, fig.width=10}
 
 data_by_weekdy_nbhd_out <- data_by_weekdy_nbhd %>%
   mutate(
@@ -779,7 +783,7 @@ plot17
 
 ### Hourly Average Net Flow by Neighborhood and Day of Week
 
-```{r fig.height= 13, fig.width = 10}
+```{r fig.height= 13, fig.width = 13}
 
 # Filter and reorder data
 data_by_weekdy_nbhd <- data_by_weekdy_nbhd %>%
