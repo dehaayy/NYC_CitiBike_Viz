@@ -247,7 +247,7 @@ plot1 <- ggplot(data_by_day_agg, aes(x = day, y = avg_inflow)) +
        y = "Flow") +
   theme_minimal(16) +
   theme(axis.title = element_text(face = "bold"),
-    plot.title = element_text(size = 15,
+    plot.title = element_text(size = 16,
         face = "bold", vjust = 0),
     axis.text.x = element_text(angle = 45, hjust = 1))+
   scale_fill_manual(values = c("avg_inflow" = "dodgerblue", "avg_outflow" = "mediumseagreen"))+
@@ -447,7 +447,7 @@ plot7 <- data_by_year_agg %>%
        x = "",
        y = "Year") +
   scale_fill_manual(values = c("-1" = "dodgerblue", "1" = "mediumseagreen"), guide = FALSE) +
-  theme_minimal() +
+  theme_minimal(16) +
   theme(axis.title = element_text(face = "bold"),
     plot.title = element_text(size = 16,
         face = "bold", vjust = 0))
@@ -719,7 +719,7 @@ plot15
 
 In the chart below, we plotted average hourly net flow over the years across stations, faceted by neighborhood. Again, we can see that the large majority of stations have a negative net flow, furthermore, this chart shows that the stations in Manhattan are by far the most popular.
 
-```{r fig.height= 14, fig.width = 14}
+```{r fig.height= 15, fig.width = 15}
 # Filter and reorder data
 data_by_year_nbhd <- data_by_year_nbhd %>%
   filter(avg_netflow != 0) %>%
@@ -736,7 +736,7 @@ plot16 <- data_by_year_nbhd %>%
   labs(title = "Average Hourly Netflow Over the Years by Neighborhood",
        x = " ",
        y = "Average Hourly Netflow") +
-  theme_minimal(16) +
+  theme_minimal() +
   facet_wrap(~borough, ncol = 1, scales = "free_y") +
   theme(legend.position = "none", strip.text = element_text(size = 15),  # Adjust the font size here
         axis.title = element_text(face = "bold"),
@@ -753,7 +753,7 @@ This suggests that demand for Citi Bikes are higher in popular recreational area
 
 In terms of station and bike re-balancing and bike availability, the data suggests that demand is excessive in those highlighted neighborhoods where situations with a shortage of bikes are more likely.
 
-```{r fig.height= 14, fig.width = 14}
+```{r fig.height= 17, fig.width = 17}
 
 # Filter and reorder data
 data_by_season_nbhd <- data_by_season_nbhd %>%
@@ -771,7 +771,7 @@ plot17 <- data_by_season_nbhd %>%
   labs(title = "Average Hourly Netflow by Season",
        x = " ",
        y = "Average Hourly Netflow") +
-  theme_minimal(14) +
+  theme_minimal() +
   facet_grid(borough ~ season, scales = "free_y")  +
   theme(legend.position = "none", strip.text = element_text(size = 15),  # Adjust the font size here
         axis.title = element_text(face = "bold"),
@@ -781,7 +781,7 @@ plot17
 
 ### Hourly Average Net Flow by Neighborhood and Day of Week
 
-```{r fig.height= 14, fig.width = 14}
+```{r, fig.height=17, fig.width = 17}
 
 # Filter and reorder data
 data_by_weekdy_nbhd <- data_by_weekdy_nbhd %>%
@@ -799,12 +799,12 @@ ggplot(aes(x = avg_netflow, y = neighborhood, fill = borough)) +
   labs(title = "Average Hourly Netflow by Day",
        x = " ",
        y = "Average Hourly Netflow") +
-  theme_minimal(14) +
+  theme_minimal() +
   facet_grid(borough ~ fct_relevel(weekday, "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"),
              scales = "free_y")  +
   theme(legend.position = "none", strip.text = element_text(size = 15),  # Adjust the font size here
         axis.title = element_text(face = "bold"),
-        plot.title = element_text(size = 16, face = "bold", vjust = 0))
+        plot.title = element_text(size = 17, face = "bold", vjust = 0))
 
 plot18
 ```
