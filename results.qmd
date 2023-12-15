@@ -216,7 +216,7 @@ What we observe is that average hourly inflow stayed consistent throughout the y
 
 The chart also reveals cyclical patterns showing periodic peaks and troughs throughout the years. These cycles suggest the influence of external factors such as season, weather and day of week. Note: we discuss the visible gap in the second half of 2021 in our missing data analysis.
 
-```{r fig.width=10, warning=FALSE, message=FALSE}
+```{r fig.width=13, warning=FALSE, message=FALSE}
 
 # Aggregating flow data by day
 
@@ -238,15 +238,14 @@ data_by_day_agg$day <- as.Date(data_by_day_agg$day)
 
 
 # Creating x-axis label breaks
-breaks <- seq(min(data_by_day_agg$day), max(data_by_day_agg$day), by = "3 month")
+breaks <- seq(min(data_by_day_agg$day), max(data_by_day_agg$day), by = "4 month")
 
 plot1 <- ggplot(data_by_day_agg, aes(x = day, y = avg_inflow)) +
   geom_bar(stat = "identity", fill = 'cornflowerblue', width = 2) +
   labs(title = "Average Hourly Flow by Day",
        x = "Date",
        y = "Flow") +
-  theme_minimal() +
-  theme_minimal() +
+  theme_minimal(16) +
   theme(axis.title = element_text(face = "bold"),
     plot.title = element_text(size = 15,
         face = "bold", vjust = 0),
@@ -270,9 +269,8 @@ plot2 <- ggplot(data_by_day_agg, aes(x = day, y = avg_totalflow)) +
   labs(title = "Average Hourly Flow by Day (2017 - 2019)",
        x = "Date",
        y = "Flow") +
-  theme_minimal() +
+  theme_minimal(16) +
   scale_x_date(date_labels = "%b %Y", date_breaks = "5 months")+
-  theme_minimal() +
   theme(axis.title = element_text(face = "bold"),
     plot.title = element_text(size = 15,
         face = "bold", vjust = 0),
@@ -336,7 +334,7 @@ plot4 <- avg_by_month_long %>%
   labs(title = "Average Hourly Flow by Month",
        x = "Month",
        y = "Average Hourly Flow") +
-  theme_minimal() +
+  theme_minimal(16) +
   theme(axis.title = element_text(face = "bold"),
     plot.title = element_text(size = 15,
         face = "bold", vjust = 0),
@@ -350,7 +348,7 @@ plot5 <- avg_by_season_long %>%
   labs(title = "Average Hourly Flow by Season",
        x = "Season",
        y = "Average Hourly Flow") +
- theme_minimal() +
+ theme_minimal(16) +
   theme(axis.title = element_text(face = "bold"),
     plot.title = element_text(size = 15,
         face = "bold", vjust = 0),
@@ -370,7 +368,7 @@ print(month_season_flow)
 
 We can also aggregate by day of week to see how average hourly inflow differs across different days of the week. Trends are not very obvious here but we can still see that ridership is higher on weekdays, unexpectedly:
 
-```{r fig.width=8}
+```{r fig.width=10}
 
 
 # changing days from 1-7 to actual day names
@@ -408,7 +406,7 @@ plot6 <- avg_by_weekdy_long %>%
   labs(title = "Average Daily Flow by Day of Week",
        x = "Day",
        y = "Average Daily Flow") +
-  theme_minimal() +
+  theme_minimal(15) +
     theme(axis.title = element_text(face = "bold"),
     plot.title = element_text(size = 15,
         face = "bold", vjust = 0)) +
@@ -425,7 +423,7 @@ A positive net flow indicates a higher influx of bikes, possibly suggesting that
 
 ### Citi Bike Hourly Average Net Flow by Year, Month, Season, Day
 
-The diverging bar charts below reveals that on average, net flow is negative across stations.
+The diverging bar charts below reveals that on average, net flow is negative across stations. Bars diverging to the left indicate negative flow (net outflow) and bars to the right indicate positive flow (net inflow).
 
 ```{r fig.height = 8, fig.width = 10,  warning=FALSE, message=FALSE}
 
@@ -451,7 +449,7 @@ plot7 <- data_by_year_agg %>%
   scale_fill_manual(values = c("-1" = "dodgerblue", "1" = "mediumseagreen"), guide = FALSE) +
   theme_minimal() +
   theme(axis.title = element_text(face = "bold"),
-    plot.title = element_text(size = 15,
+    plot.title = element_text(size = 16,
         face = "bold", vjust = 0))
 
 # Show the plot
@@ -462,7 +460,7 @@ plot8 <- data_by_month_agg %>%
        x = "",
        y = "Month") +
   scale_fill_manual(values = c("-1" = "dodgerblue", "1" = "mediumseagreen"), guide = "none") +
-  theme_minimal() +
+  theme_minimal(16) +
   theme(axis.title = element_text(face = "bold"),
     plot.title = element_text(size = 15,
         face = "bold", vjust = 0))
@@ -477,9 +475,9 @@ plot9 <- data_by_weekdy_agg %>%
        x = "Average Hourly Net Flow",
        y = "Day") +
   scale_fill_manual(values = c("-1" = "dodgerblue", "1" = "mediumseagreen"), guide = FALSE) +
-  theme_minimal() +
+  theme_minimal(16) +
     theme(axis.title = element_text(face = "bold"),
-    plot.title = element_text(size = 15,
+    plot.title = element_text(size = 16,
         face = "bold", vjust = 0))
 
 # Show the plot
@@ -491,9 +489,9 @@ plot10 <- data_by_season_agg %>%
        x = "Average Hourly Net Flow",
        y = "Season") +
   scale_fill_manual(values = c("-1" = "dodgerblue", "1" = "mediumseagreen"), guide = FALSE) +
-  theme_minimal() +
+  theme_minimal(16) +
     theme(axis.title = element_text(face = "bold"),
-    plot.title = element_text(size = 15,
+    plot.title = element_text(size = 16,
         face = "bold", vjust = 0))
 
 nf_plots <- plot7 + plot8 + plot9 + plot10 +
@@ -552,10 +550,10 @@ plot11 <- data_by_year_nbhd_in %>%
   labs(title = "Average Hourly Inflow by Year",
        x = " ",
        y = "Average Hourly Inflow") +
-  theme_minimal() +
+  theme_minimal(16) +
   facet_wrap(~borough, ncol = 1) +
   theme(axis.text.x = element_blank(), legend.position = "none",axis.title = element_text(face = "bold"),
-    plot.title = element_text(size = 15,
+    plot.title = element_text(size = 16,
         face = "bold", vjust = 0))
 
 plot11
@@ -569,10 +567,10 @@ plot12 <- data_by_year_nbhd_out %>%
   labs(title = "Average Hourly Outflow by Year",
        x = " ",
        y = "Average Hourly Outflow") +
-  theme_minimal() +
+  theme_minimal(16) +
   facet_wrap(~borough, ncol = 1) +
   theme(axis.text.x = element_blank(), legend.position = "none",axis.title = element_text(face = "bold"),
-    plot.title = element_text(size = 15,
+    plot.title = element_text(size = 16,
         face = "bold", vjust = 0))
 
 plot12
@@ -619,14 +617,14 @@ plot11 <- data_by_season_nbhd_in %>%
   labs(title = "Avgerage Hourly Inflow by Season",
        x = " ",
        y = "Average Hourly Inflow") +
-  theme_minimal() +
+  theme_minimal(16) +
   facet_grid(borough ~ season) +
   theme(axis.text.x = element_blank(), legend.position = "none", axis.title = element_text(face = "bold"),
-        plot.title = element_text(size = 15, face = "bold", vjust = 0))
+        plot.title = element_text(size = 16, face = "bold", vjust = 0))
 plot11
 ```
 
-```{r fig.height=8, fig.width=8, message = FALSE}
+```{r fig.height=8, fig.width=10, message = FALSE}
 
 data_by_season_nbhd_out <- data_by_season_nbhd %>%
   mutate(
@@ -640,10 +638,10 @@ plot12 <- data_by_season_nbhd_out %>%
   labs(title = "Avg Hourly Outflow by Season",
        x = " ",
        y = "Average Hourly Outflow") +
-  theme_minimal() +
+  theme_minimal(16) +
   facet_grid(borough ~ season) +
   theme(axis.text.x = element_blank(), legend.position = "none", axis.title = element_text(face = "bold"),
-        plot.title = element_text(size = 15, face = "bold", vjust = 0))
+        plot.title = element_text(size = 16, face = "bold", vjust = 0))
 
 plot12
 
@@ -684,10 +682,10 @@ plot14 <- data_by_weekdy_nbhd_in %>%
   labs(title = "Avg Hourly Inflow by Day",
        x = " ",
        y = "Average Hourly Inflow") +
-  theme_minimal() +
+  theme_minimal(16) +
   facet_grid(borough ~ fct_relevel(weekday, "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")) +
   theme(axis.text.x = element_blank(), legend.position = "none", axis.title = element_text(face = "bold"),
-        plot.title = element_text(size = 15, face = "bold", vjust = 0))
+        plot.title = element_text(size = 16, face = "bold", vjust = 0))
 
 plot14
 
@@ -707,10 +705,10 @@ plot15 <- data_by_weekdy_nbhd_out %>%
   labs(title = "Avg Hourly Outflow by Day",
        x = " ",
        y = "Average Hourly Outflow") +
-  theme_minimal() +
+  theme_minimal(16) +
   facet_grid(borough ~ fct_relevel(weekday, "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")) +
   theme(axis.text.x = element_blank(), legend.position = "none", axis.title = element_text(face = "bold"),
-        plot.title = element_text(size = 15, face = "bold", vjust = 0))
+        plot.title = element_text(size = 16, face = "bold", vjust = 0))
 
 plot15
 ```
@@ -721,7 +719,7 @@ plot15
 
 In the chart below, we plotted average hourly net flow over the years across stations, faceted by neighborhood. Again, we can see that the large majority of stations have a negative net flow, furthermore, this chart shows that the stations in Manhattan are by far the most popular.
 
-```{r fig.height= 13, fig.width = 10}
+```{r fig.height= 14, fig.width = 14}
 # Filter and reorder data
 data_by_year_nbhd <- data_by_year_nbhd %>%
   filter(avg_netflow != 0) %>%
@@ -738,11 +736,11 @@ plot16 <- data_by_year_nbhd %>%
   labs(title = "Average Hourly Netflow Over the Years by Neighborhood",
        x = " ",
        y = "Average Hourly Netflow") +
-  theme_minimal() +
+  theme_minimal(16) +
   facet_wrap(~borough, ncol = 1, scales = "free_y") +
   theme(legend.position = "none", strip.text = element_text(size = 15),  # Adjust the font size here
         axis.title = element_text(face = "bold"),
-        plot.title = element_text(size = 15, face = "bold", vjust = 0))
+        plot.title = element_text(size = 16, face = "bold", vjust = 0))
 
 plot16
 ```
@@ -755,7 +753,7 @@ This suggests that demand for Citi Bikes are higher in popular recreational area
 
 In terms of station and bike re-balancing and bike availability, the data suggests that demand is excessive in those highlighted neighborhoods where situations with a shortage of bikes are more likely.
 
-```{r fig.height= 13, fig.width = 10}
+```{r fig.height= 14, fig.width = 14}
 
 # Filter and reorder data
 data_by_season_nbhd <- data_by_season_nbhd %>%
@@ -773,17 +771,17 @@ plot17 <- data_by_season_nbhd %>%
   labs(title = "Average Hourly Netflow by Season",
        x = " ",
        y = "Average Hourly Netflow") +
-  theme_minimal() +
+  theme_minimal(14) +
   facet_grid(borough ~ season, scales = "free_y")  +
   theme(legend.position = "none", strip.text = element_text(size = 15),  # Adjust the font size here
         axis.title = element_text(face = "bold"),
-        plot.title = element_text(size = 15, face = "bold", vjust = 0))
+        plot.title = element_text(size = 16, face = "bold", vjust = 0))
 plot17
 ```
 
 ### Hourly Average Net Flow by Neighborhood and Day of Week
 
-```{r fig.height= 13, fig.width = 13}
+```{r fig.height= 14, fig.width = 14}
 
 # Filter and reorder data
 data_by_weekdy_nbhd <- data_by_weekdy_nbhd %>%
@@ -801,12 +799,12 @@ ggplot(aes(x = avg_netflow, y = neighborhood, fill = borough)) +
   labs(title = "Average Hourly Netflow by Day",
        x = " ",
        y = "Average Hourly Netflow") +
-  theme_minimal() +
+  theme_minimal(14) +
   facet_grid(borough ~ fct_relevel(weekday, "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"),
              scales = "free_y")  +
   theme(legend.position = "none", strip.text = element_text(size = 15),  # Adjust the font size here
         axis.title = element_text(face = "bold"),
-        plot.title = element_text(size = 15, face = "bold", vjust = 0))
+        plot.title = element_text(size = 16, face = "bold", vjust = 0))
 
 plot18
 ```
